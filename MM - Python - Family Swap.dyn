@@ -1,0 +1,665 @@
+{
+  "Uuid": "ed8c718b-4a71-40a3-a19c-02562708a8e8",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Family Swap",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "[\"Offset\",\n\"EX_Elec_Conduit_Size\"\n\n];",
+      "Id": "00d453df0d2143f79bc09661763d938d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "50299ca0eb754e5c9094fb765faa6e2f",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
+      "Id": "317a54bedda94596841aef06d399fb1d",
+      "Inputs": [
+        {
+          "Id": "9cf8f836d1a2417b9f02caa8ddcc41b0",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "86205d25353c49679759050dde60e2ed",
+          "Name": "parameterName",
+          "Description": "The name of the parameter to set.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "714f5a5995c140d8b6d127926cc75b7a",
+          "Name": "value",
+          "Description": "The value.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ee561f09122746758e9ce2f222d15afd",
+          "Name": "Element",
+          "Description": "Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Set one of the element's parameters.\n\nElement.SetParameterByName (parameterName: string, value: var): Element"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Family\";",
+      "Id": "f9c4f9b2bec241a38940183696af4645",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "3e8e35d25b1a44b69d71e8b9d9df0ca1",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 66,
+      "NodeType": "ExtensionNode",
+      "Id": "9b91b511a6544179ad4162046b6871ed",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7127229d57a54178b4d126134bdf5d14",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.GetParameterValueByName@string",
+      "Id": "f8b694eb68644f2cb0146b02fd4fec7a",
+      "Inputs": [
+        {
+          "Id": "d0dab9b455d448dba830ed18719ed9c1",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 1,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e19ad8259cfd4a188f36b281bd808014",
+          "Name": "parameterName",
+          "Description": "The name of the parameter whose value you want to obtain.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 1,
+          "UseLevels": true,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "12512e30ec784dc686d5055dd077e927",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the value of one of the element's parameters.\n\nElement.GetParameterValueByName (parameterName: string): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "[passthrough,waitfor][0];",
+      "Id": "d5b00dd7d8e54c879ce04851cda555b9",
+      "Inputs": [
+        {
+          "Id": "d6556f9f43764ed5bb8f68a94508605c",
+          "Name": "passthrough",
+          "Description": "passthrough",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ef3ab348d49a4af3821d722514e2a7b2",
+          "Name": "waitfor",
+          "Description": "waitfor",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "40aab6b77aec46579fadfe363bf97f2b",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.FamilyInstance.ByFamilyType@Revit.Elements.FamilyType",
+      "Id": "98a57a078e974d7bbf1adb1b5a725282",
+      "Inputs": [
+        {
+          "Id": "abdcfa579d0b42e1b5f90e481dfea04d",
+          "Name": "familyType",
+          "Description": "Family Type. Also called Family Symbol.\n\nFamilyType",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "11d8c6453d064d4abe83f6c6c7605add",
+          "Name": "FamilyInstance[]",
+          "Description": "FamilyInstance[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Obtain a collection of FamilyInstances from the Revit Document and use them in the Dynamo graph\n\nFamilyInstance.ByFamilyType (familyType: FamilyType): FamilyInstance[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
+      "Id": "a6a1adcedffd473f94737c8c03c39dba",
+      "Inputs": [
+        {
+          "Id": "b8f54069865b4865ad01ba3ffa413a45",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "dfc44d065dda4f998f94a3194b3edb9a",
+          "Name": "parameterName",
+          "Description": "The name of the parameter to set.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 1,
+          "UseLevels": true,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "48ff7295dd554a6fa62ecc4c15118639",
+          "Name": "value",
+          "Description": "The value.\n\nvar",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8766297d28404c54bccd7622d2078294",
+          "Name": "Element",
+          "Description": "Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Set one of the element's parameters.\n\nElement.SetParameterByName (parameterName: string, value: var): Element"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\n\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nimport System \r\nimport System.Collections\r\n#Access to Revit Document\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n#To Get Doc, UI and Application Objects\r\nfrom RevitServices.Persistence import DocumentManager\r\n#Needed to make any changes in Revit\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\n\r\nfrom Autodesk.Revit.DB.Structure import *\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\nimport traceback\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n\r\n\r\n#Define Lists\r\n\r\nelemTypeName = []\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\nfamTypeToChange = IN[0]\r\nfamTypeToChangeTo = IN[1]\r\n\r\nfamTypeToChangeName = famTypeToChange.Name.ToString()\r\nfamTypeToChangeFamName = UnwrapElement(famTypeToChange).FamilyName.ToString()\r\n\r\nfamTypeToChangeToName = famTypeToChangeTo.Name.ToString()\r\nfamTypeToChangeToFamName = UnwrapElement(famTypeToChange).FamilyName.ToString()\r\n\r\n\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n#Get Elements with Family Name Matching info Above\r\n\r\nstring = famTypeToChangeFamName\r\ncase = IN[2]\r\nsearch = \"Family\"\r\n\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\n\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == search:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\n\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == search:\r\n\t\t\tbiplist.append(bip)\r\n\r\nsharedparamrule = SharedParameterApplicableRule(search)\r\n\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == search:\r\n\t\t\tparameter = param\r\n\t\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\r\n\t\t\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\n\t\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\r\n\tcollector2 = FilteredElementCollector(doc)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\n#Check Family Names of Selected, check to ensure Family Type Matches Also\r\ntry:\r\n\telems = []\r\n\tfor e in elements:\r\n\t\telemTypeName = e.Name == famTypeToChangeName\r\n\t\tif elemTypeName == True:\r\n\t\t\telems.append(e)\r\n\t\t\r\n\t\t\r\nexcept:\r\n\tOUT = elemTypeName = \"No Elements Match\"\r\n\r\n\r\n#Get All Parameter Names, and Values for Any that have a value\r\n#Set New Family Name and Type, Set Parameter Values\r\nOutput = []\r\ntry:\r\n\t\t\r\n\tfor setElems in elems:\r\n\t\tOutput.append(\"Start\")\r\n\t\telemParamMap = []\r\n\t\tfilterReadOnlyFalseAll = []\r\n\t\telemParamName = []\r\n\t\telemParamNameAll = []\r\n\t\telemParamValue = []\r\n\t\telemParamValueAll = []\r\n\t\tparameter = []\r\n\r\n\t\telemParamMap = setElems.ParametersMap\r\n\t\tfor ePS in elemParamMap:\r\n\t\t\tif not ePS.IsReadOnly:\r\n\t\t\t\tfilterReadOnlyFalseAll.append(ePS)\r\n\t\tfor fROFA in filterReadOnlyFalseAll:\r\n\t\t\tif fROFA.UserModifiable:\r\n\t\t\t\telemParamName = fROFA.Definition.Name\r\n\t\t\t\telemParamNameAll.append(elemParamName)\r\n\t\t\t\telemParamValue = None\r\n\t\t\t\tif fROFA.StorageType == StorageType.String:\r\n\t\t\t\t\telemParamValue = fROFA.AsString()\r\n\t\t\t\telse:\r\n\t\t\t\t\telemParamValue = fROFA.AsValueString()\r\n\t\t\t\telemParamValueAll.append(elemParamValue)\r\n\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\tsetElems.ChangeTypeId(UnwrapElement(famTypeToChangeTo).Id)\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\tfor elemParamName, elemParamValue in zip(elemParamNameAll, elemParamValueAll):\r\n\t\t\tif elemParamValue == elemParamName:\r\n\t\t\t\telemParamValue = elemParamName.Id\r\n\t\t\t\tOutput.add(elemParamValue)\r\n\t\t\tparameter = setElems.LookupParameter(elemParamName)\r\n\t\t\tif parameter.StorageType == StorageType.String:\r\n\t\t\t\tparameter.Set(str(elemParamValue))\r\n\t\t\telse:\r\n\t\t\t\tparameter.SetValueString(elemParamValue)\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\tOutput.append(\"Done\")\r\n\t\t\r\n\t\t\r\nexcept ValueError as ve:\r\n\tOutput.append(\"Family Swap Failed\")\r\n\tOutput.append(ve)\r\n\r\n\r\nOUT = elems.Count, Output",
+      "VariableInputPorts": true,
+      "Id": "375e25dee43448fda06ec4700e3a75a8",
+      "Inputs": [
+        {
+          "Id": "97a7962b695b40a8a96141b94b7e08bd",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b93590de013e41f0b60c32ed7ab62a82",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "64aa835baee8410396e89a4465c91820",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "47eeadb2bed24c22892768c566b63997",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 74,
+      "NodeType": "ExtensionNode",
+      "Id": "d10bcf0c9d9f4f4c8a25d0a9a0063aa2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "964ce3007ea9496a97f00ef31b5a8c4e",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "2b4afcc4de3444938559e2371658f276",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f1f6bb80eca744dca39baedfdba7a67a",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "4371d75c66524605b5f30041745a97b9",
+      "Inputs": [
+        {
+          "Id": "fda5f04b95a446248ddca98906cae4c1",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f93520e5576c41468c67fdae3c68d6d5",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "50299ca0eb754e5c9094fb765faa6e2f",
+      "End": "e19ad8259cfd4a188f36b281bd808014",
+      "Id": "0c3aa714694849ed94fb007e94ebd2a9"
+    },
+    {
+      "Start": "50299ca0eb754e5c9094fb765faa6e2f",
+      "End": "dfc44d065dda4f998f94a3194b3edb9a",
+      "Id": "57824ebd70f14309b0a42135eef51402"
+    },
+    {
+      "Start": "3e8e35d25b1a44b69d71e8b9d9df0ca1",
+      "End": "86205d25353c49679759050dde60e2ed",
+      "Id": "2d6bfe201d4c4d7696f58fe0076ac13c"
+    },
+    {
+      "Start": "7127229d57a54178b4d126134bdf5d14",
+      "End": "b93590de013e41f0b60c32ed7ab62a82",
+      "Id": "b42107e50c764904b180f4ea02f50515"
+    },
+    {
+      "Start": "7127229d57a54178b4d126134bdf5d14",
+      "End": "714f5a5995c140d8b6d127926cc75b7a",
+      "Id": "e745f74639894224866aea26fb15532e"
+    },
+    {
+      "Start": "12512e30ec784dc686d5055dd077e927",
+      "End": "ef3ab348d49a4af3821d722514e2a7b2",
+      "Id": "53e5d41f1d6b43ffaee6326c67a169a4"
+    },
+    {
+      "Start": "12512e30ec784dc686d5055dd077e927",
+      "End": "48ff7295dd554a6fa62ecc4c15118639",
+      "Id": "512ca8b77145460d8765587205cb30f9"
+    },
+    {
+      "Start": "40aab6b77aec46579fadfe363bf97f2b",
+      "End": "9cf8f836d1a2417b9f02caa8ddcc41b0",
+      "Id": "31c1aa35a9364a0f86916c005ebf4aa7"
+    },
+    {
+      "Start": "40aab6b77aec46579fadfe363bf97f2b",
+      "End": "b8f54069865b4865ad01ba3ffa413a45",
+      "Id": "bf71f49f41c14243a309dc718bc7d9b8"
+    },
+    {
+      "Start": "11d8c6453d064d4abe83f6c6c7605add",
+      "End": "d6556f9f43764ed5bb8f68a94508605c",
+      "Id": "138ce564285e4da3bd2aaf07a60a46c4"
+    },
+    {
+      "Start": "11d8c6453d064d4abe83f6c6c7605add",
+      "End": "d0dab9b455d448dba830ed18719ed9c1",
+      "Id": "097b030fbbb74c938f98c2d5123ef31f"
+    },
+    {
+      "Start": "47eeadb2bed24c22892768c566b63997",
+      "End": "fda5f04b95a446248ddca98906cae4c1",
+      "Id": "c3867d9ce8d24ab9ac9019af32b1a011"
+    },
+    {
+      "Start": "964ce3007ea9496a97f00ef31b5a8c4e",
+      "End": "97a7962b695b40a8a96141b94b7e08bd",
+      "Id": "74bef885a21e45708a3014089a8d5d63"
+    },
+    {
+      "Start": "964ce3007ea9496a97f00ef31b5a8c4e",
+      "End": "abdcfa579d0b42e1b5f90e481dfea04d",
+      "Id": "33ddde0a33f54a989dfe170d57274cc8"
+    },
+    {
+      "Start": "f1f6bb80eca744dca39baedfdba7a67a",
+      "End": "64aa835baee8410396e89a4465c91820",
+      "Id": "d897182f21b0493c97a0935bf092e231"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -22.335239130720336,
+      "EyeY": 41.972295959531714,
+      "EyeZ": 91.9151448344386,
+      "LookX": 20.905328640000008,
+      "LookY": -22.647439360000014,
+      "LookZ": -101.04242176000002,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Worksets",
+        "Id": "00d453df0d2143f79bc09661763d938d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1753.94213555492,
+        "Y": 209.44970808711162
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.SetParameterByName",
+        "Id": "317a54bedda94596841aef06d399fb1d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -767.26715943791464,
+        "Y": 53.420394215402155
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "f9c4f9b2bec241a38940183696af4645",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -897.77657809345419,
+        "Y": -3.0495723515696227
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Family Types To Change To ",
+        "Id": "9b91b511a6544179ad4162046b6871ed",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2094.5961956555975,
+        "Y": -412.33363958389884
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.GetParameterValueByName",
+        "Id": "f8b694eb68644f2cb0146b02fd4fec7a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -1504.4727083047871,
+        "Y": 147.36801306852919
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "d5b00dd7d8e54c879ce04851cda555b9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1229.2820202733433,
+        "Y": 58.025728609550526
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "FamilyInstance.ByFamilyType",
+        "Id": "98a57a078e974d7bbf1adb1b5a725282",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": -1821.1794084049841,
+        "Y": 52.255411121237728
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Element.SetParameterByName",
+        "Id": "a6a1adcedffd473f94737c8c03c39dba",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -868.11616348557891,
+        "Y": 189.47037258339265
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Family Swap, IN[0]:Family Types To Change. IN[1]:Family Types To Change To.",
+        "Id": "375e25dee43448fda06ec4700e3a75a8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1781.6430303227164,
+        "Y": -459.88320068446535
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Family Types To Change",
+        "Id": "d10bcf0c9d9f4f4c8a25d0a9a0063aa2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2106.3999226848209,
+        "Y": -479.00988327436261
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "IgnoreCase?",
+        "Id": "2b4afcc4de3444938559e2371658f276",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2000.8719197939665,
+        "Y": -336.58641937114021
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "4371d75c66524605b5f30041745a97b9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1274.5499076163378,
+        "Y": -464.8953769336652
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "bfd0ebe9ece644eea9554c091dd19f3b",
+        "Title": "BEFORE",
+        "Nodes": [
+          "00d453df0d2143f79bc09661763d938d",
+          "317a54bedda94596841aef06d399fb1d",
+          "f9c4f9b2bec241a38940183696af4645",
+          "f8b694eb68644f2cb0146b02fd4fec7a",
+          "d5b00dd7d8e54c879ce04851cda555b9",
+          "98a57a078e974d7bbf1adb1b5a725282",
+          "a6a1adcedffd473f94737c8c03c39dba"
+        ],
+        "Left": -1831.1794084049841,
+        "Top": -56.049572351569623,
+        "Width": 1343.9122489670694,
+        "Height": 402.49928043868124,
+        "FontSize": 36.0,
+        "InitialTop": -3.0495723515696227,
+        "InitialHeight": 357.49928043868124,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "a691bb07baff4f3782a6c61395b0a818",
+        "Title": "From Family Name and Type To Change, Swap to Family Types To Change To",
+        "Nodes": [
+          "9b91b511a6544179ad4162046b6871ed",
+          "375e25dee43448fda06ec4700e3a75a8",
+          "d10bcf0c9d9f4f4c8a25d0a9a0063aa2",
+          "2b4afcc4de3444938559e2371658f276",
+          "4371d75c66524605b5f30041745a97b9"
+        ],
+        "Left": -2116.3999226848209,
+        "Top": -575.00988327436266,
+        "Width": 996.85001506848312,
+        "Height": 306.42346390322245,
+        "FontSize": 36.0,
+        "InitialTop": -479.00988327436261,
+        "InitialHeight": 273.308957562525,
+        "TextblockHeight": 86.0,
+        "Background": "#FF48B9FF"
+      }
+    ],
+    "X": 3183.6434499306738,
+    "Y": 1024.2187206804144,
+    "Zoom": 1.2349346941976225
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "Uuid": "5cef31f6-9e83-4890-8a11-5733709e7d48",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "FTI - Python - Add SheetNumber to Placed Views",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\nimport os\r\nimport System \r\nimport System.Collections\r\n\r\n#Access to Revit Document\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n\r\n#To Get Doc, UI and Application Objects\r\n\r\nfrom RevitServices.Persistence import DocumentManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n\r\n#Needed to make any changes in Revit\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *;\r\n\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\n\r\n\r\n\r\n\r\npVN = []\r\npVNUnique = []\r\npVElems = []\r\n\r\n\r\nsheets = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Sheets).WhereElementIsNotElementType().ToElements()\r\ntry:\r\n\tfor s in sheets:\r\n\t\tsNumber = s.SheetNumber.ToString()\r\n\t\tplacedViews = s.GetAllPlacedViews()\r\n\t\tfor sublist in placedViews:\r\n\t\t\tif sublist not in pVNUnique:\r\n\t\t\t\tpVNUnique.append(sublist)\r\n\t\t\t\tfor pV in pVNUnique:\r\n\t\t\t\t\tpVElem = doc.GetElement(pV)\r\n\t\t\t\t\tpVNames = pVElem.Name\r\n\t\t\t\t\tpVN.append(pVNames)\r\n\t\t\t\t\tpVRefDetail = pVElem.LookupParameter(\"Detail Number\").AsString()\r\n\t\t\t\tif not pVNames.StartsWith(sNumber):\r\n\t\t\t\t\tif pVRefDetail != \"-\":\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tpVElem.LookupParameter(\"View Name\").Set(sNumber + \" - \" + pVRefDetail + \" - \" + pVNames)\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\telse:\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tpVElem.LookupParameter(\"View Name\").Set(sNumber + \" - \" + pVNames)\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\nexcept:\r\n\tOUT = \"Failed, Please verify sheets have placed views\"\r\n\t\r\n\t\t\r\n\r\nOUT =  \"Success\"\r\n",
+      "VariableInputPorts": true,
+      "Id": "71be3ed28173495baa83ebc0231dcb7f",
+      "Inputs": [
+        {
+          "Id": "6ead5e2445864447a6ecf7146b91c3a4",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1b7170e3c1204d068215329cfd5b801a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Append SheetNumber to Placed Views",
+        "Id": "71be3ed28173495baa83ebc0231dcb7f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 225.65167376530525,
+        "Y": -196.04170192673911
+      }
+    ],
+    "Annotations": [],
+    "X": 75.062586522931809,
+    "Y": 344.81360928686036,
+    "Zoom": 0.91090998000154366
+  }
+}
