@@ -8,32 +8,32 @@
   },
   "Inputs": [
     {
-      "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
-      "Name": "Boolean",
-      "Type": "boolean",
-      "Value": "true",
-      "Description": "Selection between a true and false."
-    },
-    {
       "Id": "c97c8e77c54d4574a773dc63def67f35",
       "Name": "Parameter Name",
       "Type": "string",
-      "Value": "EX_Workset",
+      "Value": "EX_Task_ID",
       "Description": "Creates a string."
     },
     {
       "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
       "Name": "SearchValue",
       "Type": "string",
-      "Value": "For Recopy",
+      "Value": "Bobs your Uncle",
       "Description": "Creates a string."
     },
     {
       "Id": "ad8f213bc8a540798ba49ee63166583e",
       "Name": "ReplaceWith",
       "Type": "string",
-      "Value": "",
+      "Value": "Teds",
       "Description": "Creates a string."
+    },
+    {
+      "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
+      "Name": "Boolean: Ignore Case",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Selection between a true and false."
     }
   ],
   "Outputs": [
@@ -47,291 +47,9 @@
   ],
   "Nodes": [
     {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Elements.Element.GetParameterValueByName@string",
-      "Id": "370074d621cf4259ba766f836b285cef",
-      "Inputs": [
-        {
-          "Id": "0e4f5a6d0a24434a992d23249c780f23",
-          "Name": "element",
-          "Description": "Revit.Elements.Element",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "9ea3edd984e64487876092feabf98ba3",
-          "Name": "parameterName",
-          "Description": "The name of the parameter whose value you want to obtain.\n\nstring",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "31652658f3834872b21dcd862464fdf6",
-          "Name": "var[]..[]",
-          "Description": "var[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Get the value of one of the element's parameters.\n\nElement.GetParameterValueByName (parameterName: string): var[]..[]"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
-      "NodeType": "CodeBlockNode",
-      "Code": "SearchValue: string;\nReplaceWith: string;",
-      "Id": "e3ee3b0bf642420194b2bd588717f5d2",
-      "Inputs": [
-        {
-          "Id": "1b4f7b5528474e9fab7678c884edf28c",
-          "Name": "SearchValue",
-          "Description": "SearchValue",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "a6384ad3471543b69d64b970cd6697b7",
-          "Name": "ReplaceWith",
-          "Description": "ReplaceWith",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "bd459eb2687f42aa9dd332e84bd7c903",
-          "Name": "",
-          "Description": "SearchValue",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "94cd8516a891452688baf4ba6e65275d",
-          "Name": "",
-          "Description": "ReplaceWith",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Allows for DesignScript code to be authored directly"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
-      "NodeType": "CodeBlockNode",
-      "Code": "parameter: string;",
-      "Id": "69878b9b7a9742c0a48bc5ba49d90fe0",
-      "Inputs": [
-        {
-          "Id": "e51439b5d9d94226b096327402ba7f4e",
-          "Name": "parameter",
-          "Description": "parameter",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "042efa61aefe4ee3b57c2b55a65513e9",
-          "Name": "",
-          "Description": "parameter",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Allows for DesignScript code to be authored directly"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "DSCore.String.Replace@string,string,string",
-      "Id": "a35b826b68c44b6fa19e974d856f65c0",
-      "Inputs": [
-        {
-          "Id": "58081c222d3b459da38cdbe6aeef8b0c",
-          "Name": "str",
-          "Description": "String to replace substrings in.\n\nstring",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "258558f9ee2945039388df0176d3d147",
-          "Name": "searchFor",
-          "Description": "Text to be replaced.\n\nstring",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "8373047429554482af90af254ee77dfb",
-          "Name": "replaceWith",
-          "Description": "Text to replace with.\n\nstring",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "58544f2147954cd2b756692780cfe1d8",
-          "Name": "str",
-          "Description": "String with replacements made.",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Replaces all occurrances of text in a string with other text.\n\nString.Replace (str: string, searchFor: string, replaceWith: string): string"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
-      "Id": "2fbfe944063f422b89d63dcb4984ec36",
-      "Inputs": [
-        {
-          "Id": "c930e96237b64439aa1e146357b4fe9d",
-          "Name": "element",
-          "Description": "Revit.Elements.Element",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "ed102808a82b4fae9b2f65c148c40bd3",
-          "Name": "parameterName",
-          "Description": "The name of the parameter to set.\n\nstring",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "d3928c42bd0e40d8a8e4207d8507eebe",
-          "Name": "value",
-          "Description": "The value.\n\nvar",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "bc01899ad5224b8380b22617243d3f68",
-          "Name": "Element",
-          "Description": "Element",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Set one of the element's parameters.\n\nElement.SetParameterByName (parameterName: string, value: var): Element"
-    },
-    {
-      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
-      "NodeType": "PythonScriptNode",
-      "Code": "import clr\nimport System\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\ndoc = DocumentManager.Instance.CurrentDBDocument\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\nclr.ImportExtensions(Revit.GeometryConversion)\n\nfrom System.Collections.Generic import List\nstring = IN[0]\ncase = IN[2]\nsearch = IN[1]\n\nbips = System.Enum.GetValues(BuiltInParameter)\n\nbm = doc.ParameterBindings\nbmlist = bm.ForwardIterator()\nparamId = None\ntestout = []\nwhile bmlist.MoveNext():\n\tbinddef = bmlist.Key\n\ttestout.append(binddef.Name)\n\tif binddef.Name == search:\n\t\tparamId = binddef.Id\n\t\tbreak\n\nparam = None\nif paramId == None:\n\tbiplist = []\n\tfor bip in bips:\n\t\ttry:\n\t\t\tname = LabelUtils.GetLabelFor(bip)\n\t\texcept:\n\t\t\tcontinue\n\t\tif name == search:\n\t\t\tbiplist.append(bip)\n\nsharedparamrule = SharedParameterApplicableRule(search)\n\nevaluator = FilterStringContains()\nparameter = None\nif paramId == None and len(biplist) == 0:\n\tcoll = FilteredElementCollector(doc)\n\tsharedparams = coll.OfClass(ParameterElement)\n\t\n\tfor param in sharedparams:\n\t\tname = param.GetDefinition().Name\n\t\tif name == search:\n\t\t\tparameter = param\n\t\n\tif parameter != None:\n\t\truleslist = List[FilterRule]()\n\t\tprovider = ParameterValueProvider(parameter.Id)\n\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\n\t\truleslist.Add(filterrule)\n\t\truleslist.Add(sharedparamrule)\n\t\tparamFilter = ElementParameterFilter(ruleslist)\n\t\tcollector = FilteredElementCollector(doc)\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\n\t\t\n\t\tcollector2 = FilteredElementCollector(doc)\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\n\t\tcollector2.UnionWith(collector)\n\n\t\t\nelif paramId == None:\n\tif len(biplist) == 1:\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\n\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\n\t\tparamFilter = ElementParameterFilter(filterrule)\n\t\tcollector = FilteredElementCollector(doc)\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\n\t\t\n\t\tcollector2 = FilteredElementCollector(doc)\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\n\t\tcollector2.UnionWith(collector)\n\telse:\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\n\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\n\t\tparamFilter = ElementParameterFilter(filterrule)\n\t\tcollector = FilteredElementCollector(doc)\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\n\t\t\n\t\tcollector2 = FilteredElementCollector(doc)\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\n\t\tcollector2.UnionWith(collector)\n\t\tfor i,param in enumerate(biplist):\n\t\t\tif i == 0:\n\t\t\t\tcontinue\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\n\t\t\ttempcollector1 = FilteredElementCollector(doc)\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\n\t\t\ttempcollector2 = FilteredElementCollector(doc)\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\n\t\t\ttempcollector2.UnionWith(tempcollector1)\n\t\t\tcollector2.UnionWith(tempcollector2)\n\t\nelse:\n\truleslist = List[FilterRule]()\n\tprovider = ParameterValueProvider(paramId)\n\tfilterrule = FilterStringRule(provider, evaluator, string, case)\n\truleslist.Add(filterrule)\n\truleslist.Add(sharedparamrule)\n\tparamFilter = ElementParameterFilter(ruleslist)\n\tcollector = FilteredElementCollector(doc)\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\n\t\n\tcollector2 = FilteredElementCollector(doc)\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\n\tcollector2.UnionWith(collector)\n\n\n\nif parameter == None and paramId == None and len(biplist) == 0:\n\tOUT = \"Does not work with non-shared family parameters\"\nelse:\n\telements = collector2.ToElements()\n\tOUT = elements",
-      "VariableInputPorts": true,
-      "Id": "80bd639191564d73b85e961d8d88ca85",
-      "Inputs": [
-        {
-          "Id": "1f50037f02d14e0ab2e35cbccce8252a",
-          "Name": "IN[0]",
-          "Description": "Input #0",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "0bef9a56d83947e9beaab0da3bdc05dd",
-          "Name": "IN[1]",
-          "Description": "Input #1",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "cdfbbac200024c9f896dfc363963f430",
-          "Name": "IN[2]",
-          "Description": "Input #2",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "ca461e8a64874e7e9ccc52b1e1bfa4ab",
-          "Name": "OUT",
-          "Description": "Result of the python script",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Runs an embedded IronPython script."
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
-      "NodeType": "BooleanInputNode",
-      "InputValue": true,
-      "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "f8f7e0607232444d975d2583851f948e",
-          "Name": "",
-          "Description": "Boolean",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Selection between a true and false."
-    },
-    {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "EX_Workset",
+      "InputValue": "EX_Task_ID",
       "Id": "c97c8e77c54d4574a773dc63def67f35",
       "Inputs": [],
       "Outputs": [
@@ -351,7 +69,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "For Recopy",
+      "InputValue": "Bobs your Uncle",
       "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
       "Inputs": [],
       "Outputs": [
@@ -371,7 +89,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "",
+      "InputValue": "Teds",
       "Id": "ad8f213bc8a540798ba49ee63166583e",
       "Inputs": [],
       "Outputs": [
@@ -426,83 +144,106 @@
       "Outputs": [],
       "Replication": "Disabled",
       "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nfrom System.Collections.Generic import List\r\ncontainString = IN[0]\r\nparametersearch = IN[1]\r\nreplaceString = IN[2]\r\ncase = IN[3]\r\n\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\n\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == parametersearch:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\n\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == parametersearch:\r\n\t\t\tbiplist.append(bip)\r\n\r\nsharedparamrule = SharedParameterApplicableRule(parametersearch)\r\n\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == parametersearch:\r\n\t\t\tparameter = param\r\n\t\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\r\n\t\t\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\n\t\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\r\n\tcollector2 = FilteredElementCollector(doc)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\n\r\n\r\n\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\n\tfor e in elements:\r\n\t\tparamVal = e.LookupParameter(parametersearch).AsString()\r\n\t\tparamValReplaced = paramVal.replace(containString, replaceString)\r\n\t\ttry:\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tsetParamVal = e.LookupParameter(parametersearch).Set(paramValReplaced)\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\texcept:\r\n\t\t\tOUT = \"Failed\"\r\n\t\r\nOUT = \"Success\"\r\n\t",
+      "VariableInputPorts": true,
+      "Id": "7ed13ef467c040e6bf7c8d365ba1d8cc",
+      "Inputs": [
+        {
+          "Id": "7dc229798d0044bc9e1624f6a410594e",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "71813ef184494c999ad4b3f1cd338891",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "30b0a93ab5fb42f295ebfdab60c47c33",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2790aaea4adc44678ff4548f728db671",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d917b55fea164becb0c9af1df4196e84",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "86777726cda94e098d2eb4d14b8b9df0",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
     }
   ],
   "Connectors": [
     {
-      "Start": "31652658f3834872b21dcd862464fdf6",
-      "End": "58081c222d3b459da38cdbe6aeef8b0c",
-      "Id": "7129cc4035cf4596897e50b23c679ad6"
-    },
-    {
-      "Start": "bd459eb2687f42aa9dd332e84bd7c903",
-      "End": "1f50037f02d14e0ab2e35cbccce8252a",
-      "Id": "077fab233eb84cadafbffca526210621"
-    },
-    {
-      "Start": "bd459eb2687f42aa9dd332e84bd7c903",
-      "End": "258558f9ee2945039388df0176d3d147",
-      "Id": "363e21167b584cb3b8cc820fd1fb91cd"
-    },
-    {
-      "Start": "94cd8516a891452688baf4ba6e65275d",
-      "End": "8373047429554482af90af254ee77dfb",
-      "Id": "afa4966ea8aa4553bbe662c609510f64"
-    },
-    {
-      "Start": "042efa61aefe4ee3b57c2b55a65513e9",
-      "End": "9ea3edd984e64487876092feabf98ba3",
-      "Id": "6775437c103049a888ce86bd75ac6cd0"
-    },
-    {
-      "Start": "042efa61aefe4ee3b57c2b55a65513e9",
-      "End": "0bef9a56d83947e9beaab0da3bdc05dd",
-      "Id": "ee84ed5650934e7781299b1dea8eb53b"
-    },
-    {
-      "Start": "042efa61aefe4ee3b57c2b55a65513e9",
-      "End": "ed102808a82b4fae9b2f65c148c40bd3",
-      "Id": "b3a5b88364de499481d58e5ebe85a61d"
-    },
-    {
-      "Start": "58544f2147954cd2b756692780cfe1d8",
-      "End": "d3928c42bd0e40d8a8e4207d8507eebe",
-      "Id": "0597cf72d7ec470d8be2690726735170"
-    },
-    {
-      "Start": "bc01899ad5224b8380b22617243d3f68",
-      "End": "aa525b7330654b3789ba3b858d4fba4a",
-      "Id": "86af46667b4c4c4d938b56009a01d29e"
-    },
-    {
-      "Start": "ca461e8a64874e7e9ccc52b1e1bfa4ab",
-      "End": "0e4f5a6d0a24434a992d23249c780f23",
-      "Id": "a6616cd71023430193d2d884ca7c6fc7"
-    },
-    {
-      "Start": "ca461e8a64874e7e9ccc52b1e1bfa4ab",
-      "End": "c930e96237b64439aa1e146357b4fe9d",
-      "Id": "6bb34626aed04bcaafbd0f3fb43ea636"
-    },
-    {
-      "Start": "f8f7e0607232444d975d2583851f948e",
-      "End": "cdfbbac200024c9f896dfc363963f430",
-      "Id": "826f1484fb884198bbaeea475414f1ab"
-    },
-    {
       "Start": "fd09376e519c4bb1a1f8b56851eaa477",
-      "End": "e51439b5d9d94226b096327402ba7f4e",
-      "Id": "0d16bc804d3f40d189991094b31f92bb"
+      "End": "71813ef184494c999ad4b3f1cd338891",
+      "Id": "3bf8a9499ad24ecfa8dff26041792c64"
     },
     {
       "Start": "62966d47eb824b96962607269617428c",
-      "End": "1b4f7b5528474e9fab7678c884edf28c",
-      "Id": "3460b0f89150486ea5a24db9f0786825"
+      "End": "7dc229798d0044bc9e1624f6a410594e",
+      "Id": "9d6ca8299e4f48ed90b68f9263373c06"
     },
     {
       "Start": "6de468517cbf414e84d6da04adaf8c95",
-      "End": "a6384ad3471543b69d64b970cd6697b7",
-      "Id": "a4b38e11c1d6427b88a9e8872170d5b3"
+      "End": "30b0a93ab5fb42f295ebfdab60c47c33",
+      "Id": "0b2f5519e36243279fbc3e5faf2ca248"
+    },
+    {
+      "Start": "86777726cda94e098d2eb4d14b8b9df0",
+      "End": "2790aaea4adc44678ff4548f728db671",
+      "Id": "8bcba15343bb4feca58d194b50658cca"
     }
   ],
   "Dependencies": [],
@@ -530,152 +271,79 @@
     },
     "NodeViews": [
       {
-        "Id": "370074d621cf4259ba766f836b285cef",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Name": "Element.GetParameterValueByName",
         "ShowGeometry": true,
-        "Excluded": false,
-        "X": 1834.0714189284874,
-        "Y": 824.23003383357184
-      },
-      {
-        "Id": "e3ee3b0bf642420194b2bd588717f5d2",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Name": "Code Block",
-        "ShowGeometry": true,
-        "Excluded": false,
-        "X": 1212.1216871667491,
-        "Y": 746.50928134208573
-      },
-      {
-        "Id": "69878b9b7a9742c0a48bc5ba49d90fe0",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Name": "Code Block",
-        "ShowGeometry": true,
-        "Excluded": false,
-        "X": 1212.7942805441003,
-        "Y": 842.07022505605516
-      },
-      {
-        "Id": "a35b826b68c44b6fa19e974d856f65c0",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Name": "String.Replace",
-        "ShowGeometry": true,
-        "Excluded": false,
-        "X": 2117.3547186458336,
-        "Y": 719.86357606436115
-      },
-      {
-        "Id": "2fbfe944063f422b89d63dcb4984ec36",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Name": "Element.SetParameterByName",
-        "ShowGeometry": true,
-        "Excluded": false,
-        "X": 2352.1633243703354,
-        "Y": 819.72303538270626
-      },
-      {
-        "Id": "80bd639191564d73b85e961d8d88ca85",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Name": "Python: filterstringContains",
-        "ShowGeometry": true,
-        "Excluded": false,
-        "X": 1620.1783351258885,
-        "Y": 868.57717197680722
-      },
-      {
-        "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
-        "IsSetAsInput": true,
-        "IsSetAsOutput": false,
-        "Name": "Boolean",
-        "ShowGeometry": true,
-        "Excluded": false,
-        "X": 1402.2215379934084,
-        "Y": 923.574495439877
-      },
-      {
+        "Name": "Parameter Name",
         "Id": "c97c8e77c54d4574a773dc63def67f35",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
-        "Name": "Parameter Name",
-        "ShowGeometry": true,
         "Excluded": false,
-        "X": 947.7654473221271,
-        "Y": 867.72391672468109
+        "X": 1082.6315568039615,
+        "Y": 797.30272687601632
       },
       {
+        "ShowGeometry": true,
+        "Name": "SearchValue",
         "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
-        "Name": "SearchValue",
-        "ShowGeometry": true,
         "Excluded": false,
-        "X": 950.675617013997,
-        "Y": 748.63356002772525
+        "X": 1079.4160951974441,
+        "Y": 739.08393809846609
       },
       {
+        "ShowGeometry": true,
+        "Name": "ReplaceWith",
         "Id": "ad8f213bc8a540798ba49ee63166583e",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
-        "Name": "ReplaceWith",
-        "ShowGeometry": true,
         "Excluded": false,
-        "X": 952.08758520941319,
-        "Y": 807.936224235214
+        "X": 1112.0543166301672,
+        "Y": 857.57501075284824
       },
       {
+        "ShowGeometry": true,
+        "Name": "Watch",
         "Id": "a16b3e17e10049249d050424d8037ad1",
         "IsSetAsInput": false,
         "IsSetAsOutput": true,
-        "Name": "Watch",
-        "ShowGeometry": true,
         "Excluded": false,
         "X": 2696.3366834773251,
         "Y": 796.72224509010357
       },
       {
+        "ShowGeometry": true,
+        "Name": "Code Block",
         "Id": "3ba709d40cfb43a3b5f2def4c2ac70b2",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
-        "Name": "Code Block",
-        "ShowGeometry": true,
         "Excluded": false,
-        "X": 849.05150176130257,
-        "Y": 1122.0
-      }
-    ],
-    "Annotations": [
+        "X": 934.00944504325946,
+        "Y": 1342.8906525330876
+      },
       {
-        "Id": "7ed74974b21a4c9593187aa070426233",
-        "Title": "Get Parameter by value, replace section, set value",
-        "Nodes": [
-          "2fbfe944063f422b89d63dcb4984ec36",
-          "80bd639191564d73b85e961d8d88ca85",
-          "370074d621cf4259ba766f836b285cef",
-          "e3ee3b0bf642420194b2bd588717f5d2",
-          "69878b9b7a9742c0a48bc5ba49d90fe0",
-          "b1a41bd8a3394003b6e6b4bb365ed3f9",
-          "a35b826b68c44b6fa19e974d856f65c0"
-        ],
-        "Left": 1202.1216871667491,
-        "Top": 666.86357606436115,
-        "Width": 1430.0416372035863,
-        "Height": 346.71359591244607,
-        "FontSize": 36.0,
-        "InitialTop": 719.86357606436115,
-        "InitialHeight": 348.7109193755158,
-        "TextblockHeight": 43.0,
-        "Background": "#FFC1D676"
+        "ShowGeometry": true,
+        "Name": "Python: filterstringContains, Replace Value, Set Value",
+        "Id": "7ed13ef467c040e6bf7c8d365ba1d8cc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1252.7150798238697,
+        "Y": 786.1754925623261
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean: Ignore Case",
+        "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1057.4067594014527,
+        "Y": 917.489956313266
       }
     ],
-    "X": -467.47855996191993,
-    "Y": -207.58642211649556,
-    "Zoom": 0.72652010612134643
+    "Annotations": [],
+    "X": -1019.128177189255,
+    "Y": -571.918220610246,
+    "Zoom": 1.188548390512185
   }
 }

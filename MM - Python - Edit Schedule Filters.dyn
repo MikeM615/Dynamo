@@ -1,0 +1,165 @@
+{
+  "Uuid": "6895d9f0-2cd1-4b07-8e97-66dfe4ffc577",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Edit Schedule Filters",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nfrom System.Collections.Generic import List\r\nimport re\r\n\r\ncontainString = str(IN[0])\r\nreplaceString = str(IN[1])\r\n\r\nscheduleElem = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Schedules).WhereElementIsNotElementType().ToElements()\r\n\r\nfor sE in scheduleElem:\r\n\t\r\n\ttry:\r\n\t\tsFD = sE.Definition\r\n\t\tsF = sE.Definition.GetFilters()\r\n\t\tif sF != None:\r\n\t\t\ti = 0\r\n\t\t\tfor sf in sF:\r\n\t\t\t\tsFId = sf.FieldId\r\n\t\t\t\tsFT = sf.FilterType\r\n\t\t\t\tif sf.IsStringValue: \r\n\t\t\t\t\tsFVs = sf.GetStringValue()\r\n\t\t\t\tif re.search(containString, sFVs):\r\n\t\t\t\t\tsFReplaced = sFVs.replace(containString, replaceString)\r\n\t\t\t\t\t\r\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\tsf.SetValue(sFReplaced)\r\n\t\t\t\t\tsFD.SetFilter(int(i), sf)\r\n\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\t\r\n\t\t\t\tif sf.IsDoubleValue:\r\n\t\t\t\t\tsFVd = sf.GetDoubleValue().ToString()\r\n\t\t\t\t\tif re.search(containString, sFVd):\r\n\t\t\t\t\t\tsFReplaced = sFVd.replace(containString, replaceString)\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tsf.SetValue(float(sFReplaced))\r\n\t\t\t\t\t\tsFD.SetFilter(int(i), sf)\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\t\r\n\t\t\t\tif sf.IsIntegerValue:\r\n\t\t\t\t\tsFVi = sf.GetIntegerValue().ToString()\r\n\t\t\t\t\tif re.search(containString, sFVi):\r\n\t\t\t\t\t\tsFReplaced = sFVi.replace(containString, replaceString)\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tsf.SetValue(int(sFReplaced))\r\n\t\t\t\t\t\tsFD.SetFilter(int(i), sf)\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\t\r\n\t\t\t\tif sf.IsElementIdValue:\r\n\t\t\t\t\tsFVId = sf.GetElementIdValue().ToString()\r\n\t\t\t\t\t\r\n\t\t\t\t\tif re.search(containString, sFVId):\r\n\t\t\t\t\t\tsFReplaced = sFVId.replace(containString, replaceString)\r\n\t\t\t\t\t\t\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tsf.SetValue(int(sFReplaced))\t\t\t\t\t\t\r\n\t\t\t\t\t\tsFD.SetFilter(int(i), sf)\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\t\r\n\t\t\t\ti += 1\t\t\r\n\texcept Exception:\r\n\t\tOUT = \"You are the Weakest Coder, Good Bye\"\r\n\r\n\t\t\r\nOUT = \"Success!\"\r\n",
+      "VariableInputPorts": true,
+      "Id": "450048c0a5c64d008bc96b1eb9dc8df7",
+      "Inputs": [
+        {
+          "Id": "1661c752efbc47d4ba0398c3a799426b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ec7d70b3f1ac40ce9a1cbbaa8deb10c3",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ac8e413adbc0451094ddf35c6166c5e9",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "22",
+      "Id": "9a306005ada54f55b5a0f71610adb0f8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fbf9f06786ff4921ba0a46f557bade6b",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "88",
+      "Id": "fe57461742a844f1bf516fc0e4ca121c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d1607cb823474ea09a365d78e888ac7c",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "fbf9f06786ff4921ba0a46f557bade6b",
+      "End": "1661c752efbc47d4ba0398c3a799426b",
+      "Id": "5c7d8b55782a4fbf8038da754bb3aea8"
+    },
+    {
+      "Start": "d1607cb823474ea09a365d78e888ac7c",
+      "End": "ec7d70b3f1ac40ce9a1cbbaa8deb10c3",
+      "Id": "19c6f3e07c674522bef62b26465c4c15"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "For All Schedules, find Schedule Filter Value that containString, and replaceString",
+        "Id": "450048c0a5c64d008bc96b1eb9dc8df7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 237.65945080478565,
+        "Y": 3.6876772821415216
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "containString",
+        "Id": "9a306005ada54f55b5a0f71610adb0f8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 133.65348587083201,
+        "Y": 3.5748912666165324
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "replaceString",
+        "Id": "fe57461742a844f1bf516fc0e4ca121c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 135.46385056336916,
+        "Y": 58.601302782080921
+      }
+    ],
+    "Annotations": [],
+    "X": -111.68540221880704,
+    "Y": 106.02371036330385,
+    "Zoom": 0.89957718347605542
+  }
+}
