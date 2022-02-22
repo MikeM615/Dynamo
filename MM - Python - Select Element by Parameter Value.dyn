@@ -1,0 +1,298 @@
+{
+  "Uuid": "6895d9f0-2cd1-4b07-8e97-66dfe4ffc577",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Select Element by Parameter Value",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "c97c8e77c54d4574a773dc63def67f35",
+      "Name": "Parameter Name",
+      "Type": "string",
+      "Value": "EX_Elec_Conduit_Run_Number",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
+      "Name": "SearchValue",
+      "Type": "string",
+      "Value": "2",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
+      "Name": "Boolean: Ignore Case",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Selection between a true and false."
+    }
+  ],
+  "Outputs": [
+    {
+      "Id": "a16b3e17e10049249d050424d8037ad1",
+      "Name": "Watch",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "EX_Elec_Conduit_Run_Number",
+      "Id": "c97c8e77c54d4574a773dc63def67f35",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fd09376e519c4bb1a1f8b56851eaa477",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "2",
+      "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "62966d47eb824b96962607269617428c",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "a16b3e17e10049249d050424d8037ad1",
+      "Inputs": [
+        {
+          "Id": "aa525b7330654b3789ba3b858d4fba4a",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2ae759fca6a146a79291f01618b88fd2",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "// Panel Name, FT_Elec_Conduit_Panel_From,CIM_WBS_Level_01,CIM_WBS_Full,EX_Task_ID",
+      "Id": "3ba709d40cfb43a3b5f2def4c2ac70b2",
+      "Inputs": [],
+      "Outputs": [],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nfrom System.Collections.Generic import List\r\ncontainString = IN[0]\r\nparametersearch = IN[1]\r\ncase = IN[2]\r\n\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\n\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == parametersearch:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\n\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == parametersearch:\r\n\t\t\tbiplist.append(bip)\r\n\r\nsharedparamrule = SharedParameterApplicableRule(parametersearch)\r\n\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == parametersearch:\r\n\t\t\tparameter = param\r\n\t\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\r\n\t\t\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\n\t\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\r\n\tcollector2 = FilteredElementCollector(doc)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\n\r\n\r\n\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\n\r\nelementIdList = List[ElementId]()\r\nfor e in elements:\r\n\telementIdList.Add(e.Id)\r\n\t\r\n\tsel = uidoc.Selection.SetElementIds(elementIdList)\t\r\n\t\r\nOUT = \"Success\"\r\n\t",
+      "VariableInputPorts": true,
+      "Id": "7ed13ef467c040e6bf7c8d365ba1d8cc",
+      "Inputs": [
+        {
+          "Id": "7dc229798d0044bc9e1624f6a410594e",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "71813ef184494c999ad4b3f1cd338891",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "30b0a93ab5fb42f295ebfdab60c47c33",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d917b55fea164becb0c9af1df4196e84",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "86777726cda94e098d2eb4d14b8b9df0",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "fd09376e519c4bb1a1f8b56851eaa477",
+      "End": "71813ef184494c999ad4b3f1cd338891",
+      "Id": "3bf8a9499ad24ecfa8dff26041792c64"
+    },
+    {
+      "Start": "62966d47eb824b96962607269617428c",
+      "End": "7dc229798d0044bc9e1624f6a410594e",
+      "Id": "9d6ca8299e4f48ed90b68f9263373c06"
+    },
+    {
+      "Start": "86777726cda94e098d2eb4d14b8b9df0",
+      "End": "30b0a93ab5fb42f295ebfdab60c47c33",
+      "Id": "ada59454b1fe4ddb8528d24642638ba5"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter Name",
+        "Id": "c97c8e77c54d4574a773dc63def67f35",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 997.34122327085811,
+        "Y": 817.64119102621794
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "SearchValue",
+        "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1108.0089023378457,
+        "Y": 759.78907430358458
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "a16b3e17e10049249d050424d8037ad1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 2696.3366834773251,
+        "Y": 796.72224509010357
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "3ba709d40cfb43a3b5f2def4c2ac70b2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 934.00944504325946,
+        "Y": 1342.8906525330876
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python: filterstringContains, Select Element",
+        "Id": "7ed13ef467c040e6bf7c8d365ba1d8cc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1252.7150798238697,
+        "Y": 786.1754925623261
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean: Ignore Case",
+        "Id": "b1a41bd8a3394003b6e6b4bb365ed3f9",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1053.9559033672663,
+        "Y": 877.55862220339486
+      }
+    ],
+    "Annotations": [],
+    "X": -1831.8660489836345,
+    "Y": -1320.4991943542977,
+    "Zoom": 2.0284821883768784
+  }
+}

@@ -1,0 +1,217 @@
+{
+  "Uuid": "5d596541-2b59-4718-9348-2080655f0ff0",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Tag Unique Conduit Run Number in Active View",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "f5a8857aaefe48e4b183d7f3725f9a58",
+      "Name": "Parameter Name",
+      "Type": "string",
+      "Value": "EX_Elec_Conduit_Run_Number",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nfrom System.Collections.Generic import List\r\nimport re\r\nimport sys\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\nimport traceback\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\nannoFamName = UnwrapElement(IN[0])\r\nparamName = str(IN[1])\r\n\r\n\r\neHPUnique = []\r\ntoClean = []\r\nelemRef = []\r\nelem = []\r\nt0 = []\r\n\r\nactiveViewId = doc.ActiveView.Id\r\nactiveViewElems = FilteredElementCollector(doc,doc.ActiveView.Id).WhereElementIsNotElementType().ToElements()\r\ntagOrientation = TagOrientation.Horizontal\r\n\r\naFNId = annoFamName.Id\r\nt0.append(annoFamName)\r\nfor aVE in activeViewElems:\r\n\telemHasParam = aVE.LookupParameter(paramName)\r\n\tif elemHasParam != None:\r\n\t\tif elemHasParam.AsString() != \"\":\r\n\t\t\ttoClean.append(elemHasParam.AsString())\r\n\t\t\tfor sublist in toClean:\r\n\t\t\t\tif sublist not in eHPUnique:\r\n\t\t\t\t\teHPUnique.append(sublist)\r\n\t\t\t\t\telemRef.append(Reference(aVE))\r\n\t\t\t\t\telem.append(aVE)\r\nfor eR,e in zip(elemRef,elem):\r\n\tePoint = e.Location.Point\r\n\t#adjustByXYZ = XYZ(0.5, 0.5, 0) \r\n\t#newXYZ = ePoint + adjustByXYZ\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tnewTag = IndependentTag.Create(doc, aFNId, activeViewId, eR, True, tagOrientation, ePoint)\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\r\n\t\r\n\t#tagBoundingBox = newTag.BoundingBox\r\n\t#tagFree = LeaderEndCondition.Free\r\n\t#newTag.LeaderEndCondition = tagFree\r\n\t#newTag.LeaderEnd = ePoint\r\n\r\n\r\n# Assign your output to the OUT variable.\r\nOUT = \"Success\" ",
+      "VariableInputPorts": true,
+      "Id": "2572912168834cb89b05bce042d367ce",
+      "Inputs": [
+        {
+          "Id": "8c8690dd0ccc4850b9b8e0e2a8c0fddf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f33dbfab682e4a539ead7e666da8bb3e",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "50b83caf096b4afba9b6e416964b94bd",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "ea8da5a63744419a829e18d3aa3562c8",
+      "Inputs": [
+        {
+          "Id": "2d04ecc90ca645db8b5da858e97e51cb",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "bb601d5c06b7419c98fb933c4fcfabde",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "EX_Elec_Conduit_Run_Number",
+      "Id": "f5a8857aaefe48e4b183d7f3725f9a58",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "55035a85cf5e4b59b684c69cedf00c69",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 53,
+      "NodeType": "ExtensionNode",
+      "Id": "507eca00972f4cdf8e2ae49590f5328c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4b3201c7777d474da579bf9c698575b3",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "50b83caf096b4afba9b6e416964b94bd",
+      "End": "2d04ecc90ca645db8b5da858e97e51cb",
+      "Id": "977f75670c6b499282c1e33286259a94"
+    },
+    {
+      "Start": "55035a85cf5e4b59b684c69cedf00c69",
+      "End": "f33dbfab682e4a539ead7e666da8bb3e",
+      "Id": "a0d7f9cd9a4e4503aa1427162512218a"
+    },
+    {
+      "Start": "4b3201c7777d474da579bf9c698575b3",
+      "End": "8c8690dd0ccc4850b9b8e0e2a8c0fddf",
+      "Id": "23d0dde4fd6c4cd583292c5173aec53d"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "In Active View, get all Elements, filter by parameter Value, Get Unique and Tag",
+        "Id": "2572912168834cb89b05bce042d367ce",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 857.68352981584,
+        "Y": 533.758699776752
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "ea8da5a63744419a829e18d3aa3562c8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 958.39671472224586,
+        "Y": 677.79835376230574
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter Name",
+        "Id": "f5a8857aaefe48e4b183d7f3725f9a58",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 643.42770433129169,
+        "Y": 615.23797000803336
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Choose the Annotation Family that aligns with the parameter chosen",
+        "Id": "507eca00972f4cdf8e2ae49590f5328c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 291.48947122755249,
+        "Y": 533.12932531132969
+      }
+    ],
+    "Annotations": [],
+    "X": -369.19509637669012,
+    "Y": -122.42358025610656,
+    "Zoom": 1.0069845831029893
+  }
+}
