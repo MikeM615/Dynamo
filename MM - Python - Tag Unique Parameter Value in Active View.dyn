@@ -1,0 +1,173 @@
+{
+  "Uuid": "5d596541-2b59-4718-9348-2080655f0ff0",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Tag Unique Parameter Value in Active View",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "3722b020b3c145b1948877aef6c3dfe9",
+      "Name": "Parameter Name",
+      "Type": "string",
+      "Value": "EX_Elec_Conduit_Run_Number",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "EX_Elec_Conduit_Run_Number",
+      "Id": "3722b020b3c145b1948877aef6c3dfe9",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "63dc1773d16c4aa3b1aefe554cf01b68",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 53,
+      "NodeType": "ExtensionNode",
+      "Id": "8daa7f86274548819dd53ad6678be3c2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "41d713749ebb47a4aa6237005cb64710",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('DSCoreNodes')\r\nfrom DSCore import Math\r\n\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nfrom System.Collections.Generic import List\r\nimport re\r\nimport sys\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\nimport traceback\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\nannoFamName = UnwrapElement(IN[0])\r\nparamName = IN[1]\r\n\r\n\r\neHPUnique = []\r\ntoClean = []\r\nelemRef = []\r\nelem = []\r\nePoints = []\r\n\r\nactiveView = doc.ActiveView\r\nactiveViewId = activeView.Id\r\nactiveViewElems = FilteredElementCollector(doc,doc.ActiveView.Id).WhereElementIsNotElementType().ToElements()\r\ntagOrientation = TagOrientation.Horizontal\r\n\r\naFNId = annoFamName.Id\r\nfor aVE in activeViewElems:\r\n\telemHasParam = aVE.LookupParameter(paramName)\r\n\tif elemHasParam != None:\r\n\t\tif elemHasParam.AsString() >= \"\":\r\n\t\t\ttoClean.append(elemHasParam.AsString())\r\n\t\t\tfor sublist in toClean:\r\n\t\t\t\tif sublist not in eHPUnique:\r\n\t\t\t\t\teHPUnique.append(sublist)\r\n\t\t\t\t\telem.append(aVE)\r\n\r\nfor e in elem:\r\n\tif e.Location.GetType() == LocationPoint:\r\n\t\teP = e.Location.Point\r\n\t\tePoints.Add(eP)\r\n\t\telemRef.Add(Reference(e))\r\n\t\r\n\telse:\r\n\t\tePoint = e.Location.Curve.Origin\r\n\t\tePoints.Add(eP)\r\n\t\telemRef.Add(Reference(e))\r\n\t\t\r\n\r\nfor eR,ePoint in zip(elemRef,ePoints):\r\n\ttagLeader = True\r\n\t\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tnewTag = IndependentTag.Create(doc, aFNId, activeViewId, eR, tagLeader, tagOrientation, ePoint)\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\ttagBB = newTag.get_BoundingBox(activeView)\r\n\ttextStart = XYZ.Zero\r\n\tlineEnd = XYZ.Zero\r\n\tcenter = (tagBB.Max + tagBB.Min) / 2\r\n\tcenterToEdgeX = center.X - tagBB.Min.X\r\n\tcenterToEdgeY = center.Y - tagBB.Min.Y\r\n\toffset = 2\r\n\tadjustedOffset = offset * (activeView.Scale / 48)\r\n\ttry:\r\n\t\tif (Math.Abs(e.FacingOrientation.Y) == 1):\r\n\t\t\ttextStart = ePoint.Add(XYZ(0.0, centerToEdgeY + adjustedOffset, 0.0))\r\n\t\t\tlineEnd = ePoint.Add(XYZ(0.0, centerToEdgeY, 0.0))\r\n\t\t\t\r\n\t\telif (Math.Abs(e.FacingOrientation.X) == 1):\r\n\t\t\ttextStart = ePoint.Add(XYZ(0.0, centerToEdgeX + adjustedOffset, 0.0))\r\n\t\t\tlineEnd = ePoint.Add(XYZ(0.0, centerToEdgeX, 0.0))\r\n\t\t\t\r\n\t\telif (Math.Abs(e.FacingOrientation.Y) > 0.5):\r\n\t\t\ttextStart = ePoint.Add(XYZ(centerToEdgeX - adjustedOffset, 0.0, 0.0))\r\n\t\t\tlineEnd = ePoint.Add(XYZ(0.0, 0.0, 0.0))\r\n\t\telse:\r\n\t\t\ttextStart = ePoint.Add(XYZ(centerToEdgeY - adjustedOffset, 0.0, 0.0))\r\n\t\t\tlineEnd = ePoint.Add(XYZ(0.0, 0.0, 0.0))\r\n\texcept: \r\n\t\tOUT = \"Good Try\"\r\n\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttagFree = LeaderEndCondition.Free\r\n\tnewTag.LeaderEndCondition = tagFree\r\n\tnewTag.LeaderEnd = lineEnd\r\n\tnewTag.TagHeadPosition = ePoint + XYZ(2.5,5.0,0.0) \r\n\tnewTag.LeaderElbow = ePoint + XYZ(0.0,5.0,0.0) \r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\r\n\r\nOUT = \"Success\"\r\n\t\t",
+      "VariableInputPorts": true,
+      "Id": "0a72c51905924034aee3328add47c51e",
+      "Inputs": [
+        {
+          "Id": "25051ebd9e00471a9e4dccffee326633",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fa546f7a9f214f0795708b2f8aa8ab57",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a3c6f9e9f7474b478e33bb561bfffd99",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "63dc1773d16c4aa3b1aefe554cf01b68",
+      "End": "fa546f7a9f214f0795708b2f8aa8ab57",
+      "Id": "82cc0d38fdd0408395e63cc914353b15"
+    },
+    {
+      "Start": "41d713749ebb47a4aa6237005cb64710",
+      "End": "25051ebd9e00471a9e4dccffee326633",
+      "Id": "5ab2678d5140458d91e0be17a99a1132"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter Name",
+        "Id": "3722b020b3c145b1948877aef6c3dfe9",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 681.504253264425,
+        "Y": 1009.30412533617
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Choose the Annotation Family that aligns with the parameter chosen",
+        "Id": "8daa7f86274548819dd53ad6678be3c2",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 329.566020160684,
+        "Y": 927.195480639469
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "In Active View, get all Elements, filter by parameter Value, Get Unique and Tag",
+        "Id": "0a72c51905924034aee3328add47c51e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 895.62960356296276,
+        "Y": 944.75501353011543
+      }
+    ],
+    "Annotations": [],
+    "X": -58.518270204864052,
+    "Y": -473.43671687600931,
+    "Zoom": 0.974127020425635
+  }
+}

@@ -1,0 +1,254 @@
+{
+  "Uuid": "666057ed-c512-43db-9b24-c2f340bfe437",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Create Worksets",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "archilab.Revit.Elements.Workset.ByName@string",
+      "Id": "b97cf3b7a66b4bfbae96cb15654b1b67",
+      "Inputs": [
+        {
+          "Id": "5319a9da47cf4f1195fe0799ee360470",
+          "Name": "name",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dba5f82e852344caa23df6aedd9a3648",
+          "Name": "Workset",
+          "Description": "Workset",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Create Workset by Name.\n\nWorkset.ByName (name: string): Workset"
+    },
+    {
+      "ConcreteType": "archilabUI.WorksetUi, archilabUI2022",
+      "SelectedIndex": 30,
+      "NodeType": "ExtensionNode",
+      "Id": "0e03a6dca44e428f9b6d931fa2a811f3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "25c88e9ec61a40d7a98d1a046577ae5e",
+          "Name": "workset",
+          "Description": "The selected workset",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Retrieve all available Worksets."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "archilab.Revit.Elements.Workset.Name",
+      "Id": "7e816023d85043fa9345c0370a04ee6b",
+      "Inputs": [
+        {
+          "Id": "223666cd9edd43f9ba178543dfb0f09b",
+          "Name": "workset",
+          "Description": "archilab.Revit.Elements.Workset",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "630224105b664f26b7fc6b85003f1772",
+          "Name": "string",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Workset Name\n\nWorkset.Name: string"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "+@var[]..[],var[]..[]",
+      "Id": "247e428158624ea0a0a4e5fa99d9c4a4",
+      "Inputs": [
+        {
+          "Id": "0bbfb5969ce54d8397e871f941d47fbe",
+          "Name": "x",
+          "Description": "x value.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8567755b7756472b97d5ad7c7883626e",
+          "Name": "y",
+          "Description": "y value.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fe24a610130a4147ab84506492d98e70",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Adds x to y.\n\n+ (x: var[]..[], y: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "  - Recopy Hidden ",
+      "Id": "74b0b972dd7d4ae4953904befb4bf154",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "37d4104dc2b4487689cefd6cb779c74f",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "25c88e9ec61a40d7a98d1a046577ae5e",
+      "End": "223666cd9edd43f9ba178543dfb0f09b",
+      "Id": "65c999517eaa4994b0a37f33241213d2"
+    },
+    {
+      "Start": "630224105b664f26b7fc6b85003f1772",
+      "End": "0bbfb5969ce54d8397e871f941d47fbe",
+      "Id": "a82aaa3cbe0a4b6e8dd4d9fe9cfd18e4"
+    },
+    {
+      "Start": "fe24a610130a4147ab84506492d98e70",
+      "End": "5319a9da47cf4f1195fe0799ee360470",
+      "Id": "945d01d0bf71495a9335d6746ca6df2a"
+    },
+    {
+      "Start": "37d4104dc2b4487689cefd6cb779c74f",
+      "End": "8567755b7756472b97d5ad7c7883626e",
+      "Id": "f76dcd74bb924b27a33a89d8ca959030"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Workset.ByName",
+        "Id": "b97cf3b7a66b4bfbae96cb15654b1b67",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 595.3065994825206,
+        "Y": 374.24023601693943
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Worksets",
+        "Id": "0e03a6dca44e428f9b6d931fa2a811f3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -117.1625074254365,
+        "Y": 365.44912250631052
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Workset.Name",
+        "Id": "7e816023d85043fa9345c0370a04ee6b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 101.01068530460714,
+        "Y": 359.44435573392417
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "+",
+        "Id": "247e428158624ea0a0a4e5fa99d9c4a4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 366.26443462933139,
+        "Y": 383.82719316437806
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "74b0b972dd7d4ae4953904befb4bf154",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 98.26346016790194,
+        "Y": 462.02808540844262
+      }
+    ],
+    "Annotations": [],
+    "X": 399.93311861611528,
+    "Y": -4.9268423577823341,
+    "Zoom": 1.1994243414922054
+  }
+}

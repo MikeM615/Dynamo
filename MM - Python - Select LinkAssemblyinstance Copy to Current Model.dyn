@@ -1,0 +1,744 @@
+{
+  "Uuid": "3ff247ba-6e19-4713-9f0a-2c781cdbc211",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Select LinkAssemblyinstance Copy to Current Model",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "P",
+      "Id": "184813dd1eb146fb996bd80d9b9b33f3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0d21a70cfe454e44a00d95e05af6fcff",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\nimport System\r\nimport sys\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\nfrom System.Collections.Generic import List\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nimport traceback\r\n\r\n#The inputs to this node will be stored as a list in the IN variable.\r\ndef singleton(x):\r\n\tif hasattr(x,'__iter__'): return x[0]\r\n\telse : return x\r\ndef tolist(x):\r\n\tif hasattr(x,'__iter__'): return x\r\n\telse : return [x]\t\r\n\r\n\r\ninputinst = UnwrapElement(singleton(IN[0]) )\r\ninputdoc = inputinst.GetLinkDocument()\r\n\r\nif inputdoc == None:\r\n\tdoc = DocumentManager.Instance.CurrentDBDocument\r\nelif inputdoc.GetType().ToString() == \"Autodesk.Revit.DB.RevitLinkInstance\":\r\n\tdoc = inputdoc.GetLinkDocument()\r\nelif inputdoc.GetType().ToString() == \"Autodesk.Revit.DB.Document\":\r\n\tdoc = inputdoc\r\nelse: doc = None\r\n\r\nactivedoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nsearchVal = IN[1]\r\n\t\r\nvalue = []\r\nelems = []\r\npValueList = []\r\n\r\n\r\n\r\ntry:\r\n\terrorReport = None\r\n\tresult = FilteredElementCollector(inputdoc).OfCategory(BuiltInCategory.OST_Assemblies).WhereElementIsNotElementType().ToElements()\r\n\tfor e in result:\r\n\t\tparamVal = e.Name\r\n\t\tpValueList.append(paramVal)\r\n\t\tfilteredvalue = paramVal.startswith(searchVal)\r\n\t\tif filteredvalue == True:\r\n\t\t\tvalue.append(paramVal)\r\n\t\t\telems.append(e)\t\r\n\t\t\t\r\n\t\t\t\t\r\n\t\t\t\t\t\r\n\t\t\t\t\t\r\n\t\r\nexcept:\r\n\t# if error accurs anywhere in the process catch it\r\n\terrorReport = traceback.format_exc()\r\n\r\n\t\t\t\t\t\r\n#Assign your output to the OUT variable\r\nif errorReport == None:\r\n\tOUT = value, elems, pValueList\r\n\t\r\nelse:\r\n\tOUT = errorReport\r\n\r\n\t\r\n\t\r\n\t\r\n\t\r\n\r\n\r\n\r\n\r\n",
+      "VariableInputPorts": true,
+      "Id": "0970f1993bb74fd9a45bca3362979d76",
+      "Inputs": [
+        {
+          "Id": "82a7d63c867046ddbc46e0a2e9d5860a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "61cf1b60ecbf405d955722797e1702df",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9b498e4f704b4fdda6aa32c664409c89",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "MatchingAssemblies[1];",
+      "Id": "45df3ee3939e465f9a6406ef37de2754",
+      "Inputs": [
+        {
+          "Id": "f7113bf9d04742f0b636158bf56d5561",
+          "Name": "MatchingAssemblies",
+          "Description": "MatchingAssemblies",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "bd02dc7a1e084c6ca26be0260760d652",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "AllAssemblies[2];",
+      "Id": "d69cfbb3c5f543a5b6acc464e32fb503",
+      "Inputs": [
+        {
+          "Id": "be6f40a71a2d4d4ead39dd780284c2eb",
+          "Name": "AllAssemblies",
+          "Description": "AllAssemblies",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6cea61b3990d47248057ed4310ad06cb",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "e455c78f7bb3401bb3ae680ecf63126e",
+      "Inputs": [
+        {
+          "Id": "583eeffceaf74c1793d617d0744ce2f6",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "cd2b421e54dd4c7cae4d842c70d6ea60",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "RhythmUI.Links, RhythmUI",
+      "SelectedIndex": 15,
+      "NodeType": "ExtensionNode",
+      "Id": "1822669d7d41416eb3673392d0c0bc11",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f1d807dad28049cd89dd37ac14cef58e",
+          "Name": "linkInstance",
+          "Description": "The selected linkInstance",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a link instance from all of the Revit links in your file."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "parameterValue[0];",
+      "Id": "6ff10df6e5404778b8ebcc1f3be8537c",
+      "Inputs": [
+        {
+          "Id": "48a9fc7f7d0f477d867f3fcd551692e1",
+          "Name": "parameterValue",
+          "Description": "parameterValue",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "491a27d2b0c5441ca176fbd3d26689c2",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\ndef singleton(x):\r\n\tif hasattr(x,'__iter__'): return x[0]\r\n\telse : return x\r\n\r\ndef tolist(x):\r\n\tif hasattr(x,'__iter__'): return x\r\n\telse : return [x]\r\n\r\n\r\nlinkInst = UnwrapElement(singleton(IN[0]) )\r\nelements = UnwrapElement(tolist(IN[1]) )\r\n\r\nlinkDoc = linkInst.GetLinkDocument()\r\ntf1 = linkInst.GetTotalTransform()\r\neId = List[ElementId]()\r\nfor e in elements:\r\n\ttry:\r\n\t\tid1 = e.Id\r\n\texcept:\r\n\t\tcontinue\r\n\teId.Add(id1)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ncopy = ElementTransformUtils.CopyElements(linkDoc, eId, doc, tf1, None)\r\nTransactionManager.Instance.TransactionTaskDone()\r\nOUT = []\r\nfor i in copy:\r\n\te = doc.GetElement(i)\r\n\tif e is not None:\r\n\t\tOUT.append(e.ToDSType(False))",
+      "VariableInputPorts": true,
+      "Id": "99da6f4000324e9f8a85ce0fe26fa72f",
+      "Inputs": [
+        {
+          "Id": "00b784a65a4b48a191e67200d39c3638",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f5a67863b3dc4f97a0825ac326343a82",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1218dfbee93f495fac73da94f9b3f3bb",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "c968a843dc49423cb3df0fcf552e2ab0",
+      "Inputs": [
+        {
+          "Id": "79feeb5dff204d46a2c16dc0f9fe2ed5",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ca02d227e70a4b0e89d3378c8bdd1b5c",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\nfrom System.Collections.Generic import List\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\nfrom Autodesk.Revit import Creation\r\nimport sys\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = doc.Application\r\n\r\n### The inputs to this node will be stored as a list in the IN variables.\r\nassemblyInstanceTemplate = UnwrapElement(IN[0])\r\nassemblyInstance = UnwrapElement(IN[1])\r\nlinkInstance = UnwrapElement(IN[2])\r\ninputDoc = linkInstance.GetLinkDocument()\r\n\r\n### Place your code below this line\r\n\r\n#Process Template/Existing\r\n\"\"\"\r\nfilterList = List[BuiltInCategory]()\r\nfilterList.Add(BuiltInCategory.OST_Assemblies)\r\nfilterList.Add(BuiltInCategory.OST_Schedules)\r\nfilterList.Add(BuiltInCategory.OST_Sheets)\r\nfilterList.Add(BuiltInCategory.OST_Views)\r\nfilter = ElementMulticategoryFilter(filterList)\r\ndependentElements = assemblyInstanceTemplate.GetDependentElements(filter)\r\n\"\"\"\r\ntemplateAssemblyName = assemblyInstanceTemplate.Name\r\nfilterAssemblies = ElementCategoryFilter(BuiltInCategory.OST_Assemblies)\r\nfilterSchedules = ElementCategoryFilter(BuiltInCategory.OST_Schedules)\r\nfilterScheduleSheetInstances = ElementCategoryFilter(BuiltInCategory.OST_ScheduleGraphics)\r\nfilterSheets = ElementCategoryFilter(BuiltInCategory.OST_Sheets)\r\nfilterViews = ElementCategoryFilter(BuiltInCategory.OST_Views)\r\n\r\ndependentElementsAssemblies = assemblyInstanceTemplate.GetDependentElements(filterAssemblies)\r\ndependentElementsSchedules = assemblyInstanceTemplate.GetDependentElements(filterSchedules)\r\ndependentElementsScheduleSheetInstances = assemblyInstanceTemplate.GetDependentElements(filterScheduleSheetInstances)\r\ndependentElementsSheets = assemblyInstanceTemplate.GetDependentElements(filterSheets)\r\ndependentElementsViews = assemblyInstanceTemplate.GetDependentElements(filterViews)\r\n\r\n#Process Sheet\r\ntemplateSheet = inputDoc.GetElement(dependentElementsSheets[0])\r\ntemplateSheetNumber = templateSheet.SheetNumber\r\ntemplateSheetName = templateSheet.Name\r\nfilterTitleBlocks = ElementCategoryFilter(BuiltInCategory.OST_TitleBlocks)\r\ntemplateSheetTitleBlockInstanceId = templateSheet.GetDependentElements(filterTitleBlocks)[0]\r\ntemplateSheetTitleBlock = inputDoc.GetElement(templateSheetTitleBlockInstanceId)\r\ntemplateSheetTitleBlockTypeId = templateSheetTitleBlock.GetTypeId()\r\ndependentElementsViewports = templateSheet.GetAllViewports()\r\n\r\n#Process Schedule\r\ntemplateSchedule = next(inputDoc.GetElement(s) for s in dependentElementsSchedules if inputDoc.GetElement(s).Name != \"\")\r\ntemplateScheduleSheetInstance = next(inputDoc.GetElement(s) for s in dependentElementsScheduleSheetInstances if inputDoc.GetElement(s).Name != \"\")\r\ntemplateScheduleSheetInstancePoint = templateScheduleSheetInstance.Point\r\n\r\n#Process Views\r\ntemplateThreeDView = next(inputDoc.GetElement(v) for v in dependentElementsViews if inputDoc.GetElement(v).ViewType == ViewType.ThreeD)\r\ntemplateThreeDViewport = next(inputDoc.GetElement(v) for v in dependentElementsViewports if inputDoc.GetElement(v).ViewId == templateThreeDView.Id)\r\ntemplateThreeDViewportBoxCenter = templateThreeDViewport.GetBoxCenter()\r\ntemplateThreeDViewportTypeId = templateThreeDViewport.GetTypeId()\r\n\r\ntemplatePlanView = next(inputDoc.GetElement(v) for v in dependentElementsViews if \"Plan\" in inputDoc.GetElement(v).Name)\r\ntemplatePlanViewport = next(inputDoc.GetElement(v) for v in dependentElementsViewports if inputDoc.GetElement(v).ViewId == templatePlanView.Id)\r\ntemplatePlanViewportBoxCenter = templatePlanViewport.GetBoxCenter()\r\ntemplatePlanViewportTypeId = templatePlanViewport.GetTypeId()\r\n\r\ntemplateFrontView = next(inputDoc.GetElement(v) for v in dependentElementsViews if \"Front\" in inputDoc.GetElement(v).Name)\r\ntemplateFrontViewport = next(inputDoc.GetElement(v) for v in dependentElementsViewports if inputDoc.GetElement(v).ViewId == templateFrontView.Id)\r\ntemplateFrontViewportBoxCenter = templateFrontViewport.GetBoxCenter()\r\ntemplateFrontViewportTypeId = templateFrontViewport.GetTypeId()\r\n\r\ntemplateRightView = next(inputDoc.GetElement(v) for v in dependentElementsViews if \"Right\" in inputDoc.GetElement(v).Name)\r\ntemplateRightViewport = next(inputDoc.GetElement(v) for v in dependentElementsViewports if inputDoc.GetElement(v).ViewId == templateRightView.Id)\r\ntemplateRightViewportBoxCenter = templateRightViewport.GetBoxCenter()\r\ntemplateRightViewportTypeId = templateRightViewport.GetTypeId()\r\n\r\n#Create New\r\nassemblyName = assemblyInstance.Name\r\nviewCreationAllowed = assemblyInstance.AllowsAssemblyViewCreation()\r\n\r\nif viewCreationAllowed:\r\n\t#Create Sheet\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tassemblySheet = AssemblyViewUtils.CreateSheet(doc, assemblyInstance.Id, templateSheetTitleBlockTypeId)\r\n\tassemblySheet.GetParameters(\"Sheet Name\")[0].Set(assemblyName)\r\n\tsheetCreatedMessage = \"Sheet created: \" + \\\r\n\t\t\t\t\t\t  assemblySheet.SheetNumber + \\\r\n\t\t\t\t\t\t  \" - \" + \\\r\n\t\t\t\t\t\t  assemblySheet.GetParameters(\"Sheet Name\")[0].AsString()\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Schedule\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateScheduleViewTemplate = templateSchedule.CreateViewTemplate()\r\n\tassemblySchedule = AssemblyViewUtils.CreatePartList(doc, assemblyInstance.Id, templateScheduleViewTemplate.Id, False)\r\n\tdoc.Delete(templateScheduleViewTemplate.Id)\r\n\tscheduleCreatedMessage = \"Schedule created: \" + assemblySchedule.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create 3D View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateThreeDViewTemplate = templateThreeDView.CreateViewTemplate()\r\n\tassemblyThreeDView = AssemblyViewUtils.Create3DOrthographic(doc, assemblyInstance.Id, templateThreeDViewTemplate.Id, False)\r\n\tdoc.Delete(templateThreeDViewTemplate.Id)\r\n\tthreeDViewCreatedMessage = \"3D view created: \" + assemblyThreeDView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Plan View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplatePlanViewTemplate = templatePlanView.CreateViewTemplate()\r\n\tplanViewDirection = AssemblyDetailViewOrientation.HorizontalDetail\r\n\tassemblyPlanView = AssemblyViewUtils.CreateDetailSection(doc, assemblyInstance.Id, planViewDirection, templatePlanViewTemplate.Id, False)\r\n\tdoc.Delete(templatePlanViewTemplate.Id)\r\n\tplanViewCreatedMessage = \"Plan view created: \" + assemblyPlanView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Front View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateFrontViewTemplate = templateFrontView.CreateViewTemplate()\r\n\tfrontViewDirection = AssemblyDetailViewOrientation.ElevationFront\r\n\tassemblyFrontView = AssemblyViewUtils.CreateDetailSection(doc, assemblyInstance.Id, frontViewDirection, templateFrontViewTemplate.Id, False)\r\n\tdoc.Delete(templateFrontViewTemplate.Id)\r\n\tfrontViewCreatedMessage = \"Front view created: \" + assemblyFrontView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Right View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateRightViewTemplate = templateRightView.CreateViewTemplate()\r\n\trightViewDirection = AssemblyDetailViewOrientation.ElevationRight\r\n\tassemblyRightView = AssemblyViewUtils.CreateDetailSection(doc, assemblyInstance.Id, rightViewDirection, templateRightViewTemplate.Id, False)\r\n\tdoc.Delete(templateRightViewTemplate.Id)\r\n\trightViewCreatedMessage = \"Right view created: \" + assemblyRightView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Add Schedule To Sheet\r\n\tassemblySchedulSheetInstance = ScheduleSheetInstance.Create(doc, assemblySheet.Id, assemblySchedule.Id, templateScheduleSheetInstancePoint)\r\n\t#assemblySchedulSheetInstance.Point = templateScheduleSheetInstancePoint\r\n\t\r\n\t#Add 3D View To Sheet\r\n\tassemblyThreeDViewport = Viewport.Create(doc, assemblySheet.Id, assemblyThreeDView.Id, templateThreeDViewportBoxCenter)\r\n\tassemblyThreeDViewport.ChangeTypeId(templateThreeDViewportTypeId)\r\n\t\r\n\t#Add Plan View To Sheet\r\n\tassemblyPlanViewport = Viewport.Create(doc, assemblySheet.Id, assemblyPlanView.Id, templatePlanViewportBoxCenter)\r\n\tassemblyPlanViewport.ChangeTypeId(templatePlanViewportTypeId)\r\n\t\r\n\t#Add Front View To Sheet\r\n\tassemblyFrontViewport = Viewport.Create(doc, assemblySheet.Id, assemblyFrontView.Id, templateFrontViewportBoxCenter)\r\n\tassemblyFrontViewport.ChangeTypeId(templateFrontViewportTypeId)\r\n\t\r\n\t#Add Right View To Sheet\r\n\tassemblyRightViewport = Viewport.Create(doc, assemblySheet.Id, assemblyRightView.Id, templateRightViewportBoxCenter)\r\n\tassemblyRightViewport.ChangeTypeId(templateRightViewportTypeId)\r\n\r\n\r\n### Assign your output to the OUT variable.\r\nOUT = templateAssemblyName, \\\r\n\tdependentElementsAssemblies, \\\r\n\tdependentElementsSchedules, \\\r\n\tdependentElementsScheduleSheetInstances, \\\r\n\tdependentElementsSheets, \\\r\n\tdependentElementsViews, \\\r\n\tdependentElementsViewports, \\\r\n\tassemblyName, \\\r\n\tviewCreationAllowed, \\\r\n\tsheetCreatedMessage, \\\r\n\tscheduleCreatedMessage, \\\r\n\tthreeDViewCreatedMessage, \\\r\n\tfrontViewCreatedMessage, \\\r\n\trightViewCreatedMessage\r\n\t  \r\n",
+      "VariableInputPorts": true,
+      "Id": "9d670fd958354353a7b787a2ec66f4dc",
+      "Inputs": [
+        {
+          "Id": "2b60026a34ff4ab0a1c10b9abc425c54",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d34fcadf13b649e28cd05c43d8817d81",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c10d890338334f98a89e8ebd6d69a1b9",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ab463bbf7f3e4fd282761d937edc4888",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "x[0];",
+      "Id": "e067ab8956454409898e1a0cf89afc81",
+      "Inputs": [
+        {
+          "Id": "bd46a8c57bb14752b7719592b36d02b8",
+          "Name": "x",
+          "Description": "x",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "07277939c6d34de590b22b9f0d4338e6",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "e83a98c8ffab4fc496050b24cc5e06b7",
+      "Inputs": [
+        {
+          "Id": "868b26131b6545c0a98cc82b19d64811",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3a65dcc8c642451ea25d293784ffe6a2",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "381f19d95ab9455ea2f605a56b4d3609",
+      "Inputs": [
+        {
+          "Id": "e24b55cf5d604ba2b88e37ea0f53c379",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a7ba742c3aee4956b5a90752b569c10e",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\nfrom System.Collections.Generic import List\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\nfrom Autodesk.Revit import Creation\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = doc.Application\r\n\r\n### The inputs to this node will be stored as a list in the IN variables.\r\nassemblyInstanceTemplate = UnwrapElement(IN[0])\r\nassemblyInstance = UnwrapElement(IN[1])\r\n\r\n### Place your code below this line\r\n\r\n#Process Template/Existing\r\n\"\"\"\r\nfilterList = List[BuiltInCategory]()\r\nfilterList.Add(BuiltInCategory.OST_Assemblies)\r\nfilterList.Add(BuiltInCategory.OST_Schedules)\r\nfilterList.Add(BuiltInCategory.OST_Sheets)\r\nfilterList.Add(BuiltInCategory.OST_Views)\r\nfilter = ElementMulticategoryFilter(filterList)\r\ndependentElements = assemblyInstanceTemplate.GetDependentElements(filter)\r\n\"\"\"\r\ntemplateAssemblyName = assemblyInstanceTemplate.Name\r\nfilterAssemblies = ElementCategoryFilter(BuiltInCategory.OST_Assemblies)\r\nfilterSchedules = ElementCategoryFilter(BuiltInCategory.OST_Schedules)\r\nfilterScheduleSheetInstances = ElementCategoryFilter(BuiltInCategory.OST_ScheduleGraphics)\r\nfilterSheets = ElementCategoryFilter(BuiltInCategory.OST_Sheets)\r\nfilterViews = ElementCategoryFilter(BuiltInCategory.OST_Views)\r\n\r\ndependentElementsAssemblies = assemblyInstanceTemplate.GetDependentElements(filterAssemblies)\r\ndependentElementsSchedules = assemblyInstanceTemplate.GetDependentElements(filterSchedules)\r\ndependentElementsScheduleSheetInstances = assemblyInstanceTemplate.GetDependentElements(filterScheduleSheetInstances)\r\ndependentElementsSheets = assemblyInstanceTemplate.GetDependentElements(filterSheets)\r\ndependentElementsViews = assemblyInstanceTemplate.GetDependentElements(filterViews)\r\n\r\n#Process Sheet\r\ntemplateSheet = doc.GetElement(dependentElementsSheets[0])\r\ntemplateSheetNumber = templateSheet.SheetNumber\r\ntemplateSheetName = templateSheet.Name\r\nfilterTitleBlocks = ElementCategoryFilter(BuiltInCategory.OST_TitleBlocks)\r\ntemplateSheetTitleBlockInstanceId = templateSheet.GetDependentElements(filterTitleBlocks)[0]\r\ntemplateSheetTitleBlock = doc.GetElement(templateSheetTitleBlockInstanceId)\r\ntemplateSheetTitleBlockTypeId = templateSheetTitleBlock.GetTypeId()\r\ndependentElementsViewports = templateSheet.GetAllViewports()\r\n\r\n#Process Schedule\r\ntemplateSchedule = next(doc.GetElement(s) for s in dependentElementsSchedules if doc.GetElement(s).Name == \"Part List\")\r\ntemplateScheduleSheetInstance = next(doc.GetElement(s) for s in dependentElementsScheduleSheetInstances if doc.GetElement(s).Name == \"Part List\")\r\ntemplateScheduleSheetInstancePoint = templateScheduleSheetInstance.Point\r\n\r\n#Process Views\r\ntemplateThreeDView = next(doc.GetElement(v) for v in dependentElementsViews if doc.GetElement(v).ViewType == ViewType.ThreeD)\r\ntemplateThreeDViewport = next(doc.GetElement(v) for v in dependentElementsViewports if doc.GetElement(v).ViewId == templateThreeDView.Id)\r\ntemplateThreeDViewportBoxCenter = templateThreeDViewport.GetBoxCenter()\r\ntemplateThreeDViewportTypeId = templateThreeDViewport.GetTypeId()\r\n\r\ntemplatePlanView = next(doc.GetElement(v) for v in dependentElementsViews if \"Plan\" in doc.GetElement(v).Name)\r\ntemplatePlanViewport = next(doc.GetElement(v) for v in dependentElementsViewports if doc.GetElement(v).ViewId == templatePlanView.Id)\r\ntemplatePlanViewportBoxCenter = templatePlanViewport.GetBoxCenter()\r\ntemplatePlanViewportTypeId = templatePlanViewport.GetTypeId()\r\n\r\ntemplateFrontView = next(doc.GetElement(v) for v in dependentElementsViews if \"Front\" in doc.GetElement(v).Name)\r\ntemplateFrontViewport = next(doc.GetElement(v) for v in dependentElementsViewports if doc.GetElement(v).ViewId == templateFrontView.Id)\r\ntemplateFrontViewportBoxCenter = templateFrontViewport.GetBoxCenter()\r\ntemplateFrontViewportTypeId = templateFrontViewport.GetTypeId()\r\n\r\ntemplateRightView = next(doc.GetElement(v) for v in dependentElementsViews if \"Right\" in doc.GetElement(v).Name)\r\ntemplateRightViewport = next(doc.GetElement(v) for v in dependentElementsViewports if doc.GetElement(v).ViewId == templateRightView.Id)\r\ntemplateRightViewportBoxCenter = templateRightViewport.GetBoxCenter()\r\ntemplateRightViewportTypeId = templateRightViewport.GetTypeId()\r\n\r\n#Create New\r\nassemblyName = assemblyInstance.Name\r\nviewCreationAllowed = assemblyInstance.AllowsAssemblyViewCreation()\r\n\r\nif viewCreationAllowed:\r\n\t#Create Sheet\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tassemblySheet = AssemblyViewUtils.CreateSheet(doc, assemblyInstance.Id, templateSheetTitleBlockTypeId)\r\n\tassemblySheet.GetParameters(\"Sheet Name\")[0].Set(assemblyName)\r\n\tsheetCreatedMessage = \"Sheet created: \" + \\\r\n\t\t\t\t\t\t  assemblySheet.SheetNumber + \\\r\n\t\t\t\t\t\t  \" - \" + \\\r\n\t\t\t\t\t\t  assemblySheet.GetParameters(\"Sheet Name\")[0].AsString()\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\n\t#Create Schedule\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateScheduleViewTemplate = templateSchedule.CreateViewTemplate()\r\n\tassemblySchedule = AssemblyViewUtils.CreatePartList(doc, assemblyInstance.Id, templateScheduleViewTemplate.Id, False)\r\n\tdoc.Delete(templateScheduleViewTemplate.Id)\r\n\tscheduleCreatedMessage = \"Schedule created: \" + assemblySchedule.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create 3D View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateThreeDViewTemplate = templateThreeDView.CreateViewTemplate()\r\n\tassemblyThreeDView = AssemblyViewUtils.Create3DOrthographic(doc, assemblyInstance.Id, templateThreeDViewTemplate.Id, False)\r\n\tdoc.Delete(templateThreeDViewTemplate.Id)\r\n\tthreeDViewCreatedMessage = \"3D view created: \" + assemblyThreeDView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Plan View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplatePlanViewTemplate = templatePlanView.CreateViewTemplate()\r\n\tplanViewDirection = AssemblyDetailViewOrientation.HorizontalDetail\r\n\tassemblyPlanView = AssemblyViewUtils.CreateDetailSection(doc, assemblyInstance.Id, planViewDirection, templatePlanViewTemplate.Id, False)\r\n\tdoc.Delete(templatePlanViewTemplate.Id)\r\n\tplanViewCreatedMessage = \"Plan view created: \" + assemblyPlanView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Front View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateFrontViewTemplate = templateFrontView.CreateViewTemplate()\r\n\tfrontViewDirection = AssemblyDetailViewOrientation.ElevationFront\r\n\tassemblyFrontView = AssemblyViewUtils.CreateDetailSection(doc, assemblyInstance.Id, frontViewDirection, templateFrontViewTemplate.Id, False)\r\n\tdoc.Delete(templateFrontViewTemplate.Id)\r\n\tfrontViewCreatedMessage = \"Front view created: \" + assemblyFrontView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Create Right View\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\ttemplateRightViewTemplate = templateRightView.CreateViewTemplate()\r\n\trightViewDirection = AssemblyDetailViewOrientation.ElevationRight\r\n\tassemblyRightView = AssemblyViewUtils.CreateDetailSection(doc, assemblyInstance.Id, rightViewDirection, templateRightViewTemplate.Id, False)\r\n\tdoc.Delete(templateRightViewTemplate.Id)\r\n\trightViewCreatedMessage = \"Right view created: \" + assemblyRightView.Name\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t#Add Schedule To Sheet\r\n\tassemblySchedulSheetInstance = ScheduleSheetInstance.Create(doc, assemblySheet.Id, assemblySchedule.Id, templateScheduleSheetInstancePoint)\r\n\t#assemblySchedulSheetInstance.Point = templateScheduleSheetInstancePoint\r\n\t\r\n\t#Add 3D View To Sheet\r\n\tassemblyThreeDViewport = Viewport.Create(doc, assemblySheet.Id, assemblyThreeDView.Id, templateThreeDViewportBoxCenter)\r\n\tassemblyThreeDViewport.ChangeTypeId(templateThreeDViewportTypeId)\r\n\t\r\n\t#Add Plan View To Sheet\r\n\tassemblyPlanViewport = Viewport.Create(doc, assemblySheet.Id, assemblyPlanView.Id, templatePlanViewportBoxCenter)\r\n\tassemblyPlanViewport.ChangeTypeId(templatePlanViewportTypeId)\r\n\t\r\n\t#Add Front View To Sheet\r\n\tassemblyFrontViewport = Viewport.Create(doc, assemblySheet.Id, assemblyFrontView.Id, templateFrontViewportBoxCenter)\r\n\tassemblyFrontViewport.ChangeTypeId(templateFrontViewportTypeId)\r\n\t\r\n\t#Add Right View To Sheet\r\n\tassemblyRightViewport = Viewport.Create(doc, assemblySheet.Id, assemblyRightView.Id, templateRightViewportBoxCenter)\r\n\tassemblyRightViewport.ChangeTypeId(templateRightViewportTypeId)\r\n\r\n### Assign your output to the OUT variable.\r\nOUT = templateAssemblyName, \\\r\n\t  dependentElementsAssemblies, \\\r\n\t  dependentElementsSchedules, \\\r\n\t  dependentElementsScheduleSheetInstances, \\\r\n\t  dependentElementsSheets, \\\r\n\t  dependentElementsViews, \\\r\n\t  dependentElementsViewports, \\\r\n\t  assemblyName, \\\r\n\t  viewCreationAllowed, \\\r\n\t  sheetCreatedMessage, \\\r\n\t  scheduleCreatedMessage, \\\r\n\t  threeDViewCreatedMessage, \\\r\n\t  frontViewCreatedMessage, \\\r\n\t  rightViewCreatedMessage\r\n\t  \r\n",
+      "VariableInputPorts": true,
+      "Id": "a58e79d2e76f4fa9bd39fc53c744b516",
+      "Inputs": [
+        {
+          "Id": "49fac75120184601b8f83adf9875e950",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f080627f391240e4953fd2c8f6b2c3f4",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5c5a9acb65ac43b1a91864acaf2866ae",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "0d21a70cfe454e44a00d95e05af6fcff",
+      "End": "61cf1b60ecbf405d955722797e1702df",
+      "Id": "3870840084004722ac6d03551eed2215"
+    },
+    {
+      "Start": "9b498e4f704b4fdda6aa32c664409c89",
+      "End": "be6f40a71a2d4d4ead39dd780284c2eb",
+      "Id": "7083819a3d33415abb9c60198dd3c6dd"
+    },
+    {
+      "Start": "9b498e4f704b4fdda6aa32c664409c89",
+      "End": "f7113bf9d04742f0b636158bf56d5561",
+      "Id": "bfaaf46b90184f37baa3b244fb001c1e"
+    },
+    {
+      "Start": "9b498e4f704b4fdda6aa32c664409c89",
+      "End": "48a9fc7f7d0f477d867f3fcd551692e1",
+      "Id": "59547c9bb0fa48e4b64be6c2776189dd"
+    },
+    {
+      "Start": "bd02dc7a1e084c6ca26be0260760d652",
+      "End": "bd46a8c57bb14752b7719592b36d02b8",
+      "Id": "133ea6fa2c004733b02c2feff466c0e0"
+    },
+    {
+      "Start": "6cea61b3990d47248057ed4310ad06cb",
+      "End": "868b26131b6545c0a98cc82b19d64811",
+      "Id": "804185e4ffb84bd2ac1bd1cc8b97e190"
+    },
+    {
+      "Start": "f1d807dad28049cd89dd37ac14cef58e",
+      "End": "82a7d63c867046ddbc46e0a2e9d5860a",
+      "Id": "25bda757f8b24ec983f31692ad60d4ed"
+    },
+    {
+      "Start": "f1d807dad28049cd89dd37ac14cef58e",
+      "End": "00b784a65a4b48a191e67200d39c3638",
+      "Id": "a639a626195c44bba47fe00aa21e5934"
+    },
+    {
+      "Start": "f1d807dad28049cd89dd37ac14cef58e",
+      "End": "c10d890338334f98a89e8ebd6d69a1b9",
+      "Id": "1cd278a403b640f693cf237da14d46be"
+    },
+    {
+      "Start": "491a27d2b0c5441ca176fbd3d26689c2",
+      "End": "e24b55cf5d604ba2b88e37ea0f53c379",
+      "Id": "f25ad872f65d412da0e1eeae225f3110"
+    },
+    {
+      "Start": "1218dfbee93f495fac73da94f9b3f3bb",
+      "End": "583eeffceaf74c1793d617d0744ce2f6",
+      "Id": "d4051a047702432fbd1edaae764990fa"
+    },
+    {
+      "Start": "1218dfbee93f495fac73da94f9b3f3bb",
+      "End": "d34fcadf13b649e28cd05c43d8817d81",
+      "Id": "a832ec52ff33414fa503e9ca49a77cea"
+    },
+    {
+      "Start": "ab463bbf7f3e4fd282761d937edc4888",
+      "End": "79feeb5dff204d46a2c16dc0f9fe2ed5",
+      "Id": "242477ca939f4afba37d1cf3925bc8ca"
+    },
+    {
+      "Start": "07277939c6d34de590b22b9f0d4338e6",
+      "End": "2b60026a34ff4ab0a1c10b9abc425c54",
+      "Id": "0d6862d65b4e4a49b25b4def4e08c0db"
+    },
+    {
+      "Start": "07277939c6d34de590b22b9f0d4338e6",
+      "End": "f5a67863b3dc4f97a0825ac326343a82",
+      "Id": "5227e6cb84264bd39a27f532b4a338fa"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Search Value",
+        "Id": "184813dd1eb146fb996bd80d9b9b33f3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1871.7925616732311,
+        "Y": 20.000727065955459
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "GetAllElementsFromLinkedModel IN[0]: LinkInstance IN[1]: Search Parameter OUT[0]: All Parameter Values, OUT[1]: Filtered Values Elements, OUT[2]: All Assemblies",
+        "Id": "0970f1993bb74fd9a45bca3362979d76",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2064.341682083279,
+        "Y": 24.416157475577904
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Matching Assemblies to Filter",
+        "Id": "45df3ee3939e465f9a6406ef37de2754",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3173.1191483224807,
+        "Y": 23.765680747583758
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "All Assemblies",
+        "Id": "d69cfbb3c5f543a5b6acc464e32fb503",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3086.790755124146,
+        "Y": 306.81836255909224
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "e455c78f7bb3401bb3ae680ecf63126e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4320.1837199798265,
+        "Y": 233.16600835262471
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Links",
+        "Id": "1822669d7d41416eb3673392d0c0bc11",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1427.831583528575,
+        "Y": -86.219359666493631
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Legable Parameter Value from Filter",
+        "Id": "6ff10df6e5404778b8ebcc1f3be8537c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3056.4311171510089,
+        "Y": -504.76966576036864
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "CopyLinkElementToActiveModel, IN[0]: LinkedInstance, IN[1]: LinkedElements, OUT: LocalElements",
+        "Id": "99da6f4000324e9f8a85ce0fe26fa72f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3617.368284125168,
+        "Y": -8.5528805680925757
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "c968a843dc49423cb3df0fcf552e2ab0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4914.7623077159733,
+        "Y": -136.45097009783959
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "9d670fd958354353a7b787a2ec66f4dc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": 4387.2476554456352,
+        "Y": -138.534375624518
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "e067ab8956454409898e1a0cf89afc81",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3531.7218861948563,
+        "Y": -129.52251617168724
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "e83a98c8ffab4fc496050b24cc5e06b7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3456.580060629286,
+        "Y": 288.784299722971
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "381f19d95ab9455ea2f605a56b4d3609",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3402.9649518105762,
+        "Y": -503.71870669514931
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "a58e79d2e76f4fa9bd39fc53c744b516",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4134.6100393688112,
+        "Y": 476.17686259815514
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "736c4760a49341fb871062288007a6ce",
+        "Title": "Assemblies",
+        "Nodes": [
+          "0970f1993bb74fd9a45bca3362979d76",
+          "e455c78f7bb3401bb3ae680ecf63126e",
+          "45df3ee3939e465f9a6406ef37de2754",
+          "d69cfbb3c5f543a5b6acc464e32fb503",
+          "6ff10df6e5404778b8ebcc1f3be8537c",
+          "99da6f4000324e9f8a85ce0fe26fa72f"
+        ],
+        "Left": 2054.341682083279,
+        "Top": -557.76966576036864,
+        "Width": 2353.8420378965475,
+        "Height": 957.58802831946082,
+        "FontSize": 36.0,
+        "InitialTop": -504.76966576036864,
+        "InitialHeight": 956.58802831946082,
+        "TextblockHeight": 43.0,
+        "Background": "#FFA4E1FF"
+      },
+      {
+        "Id": "581c8250ea964e3b9dbeabb24c672ff9",
+        "Title": "User Input",
+        "Nodes": [
+          "184813dd1eb146fb996bd80d9b9b33f3",
+          "1822669d7d41416eb3673392d0c0bc11"
+        ],
+        "Left": 1417.831583528575,
+        "Top": -139.21935966649363,
+        "Width": 554.96097814465611,
+        "Height": 227.22008673244909,
+        "FontSize": 36.0,
+        "InitialTop": -86.219359666493631,
+        "InitialHeight": 251.22008673244909,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -1805.9079200628403,
+    "Y": 452.79704156256014,
+    "Zoom": 0.66531607568155637
+  }
+}
