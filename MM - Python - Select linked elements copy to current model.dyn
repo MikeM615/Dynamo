@@ -1,0 +1,121 @@
+{
+  "Uuid": "3ff247ba-6e19-4713-9f0a-2c781cdbc211",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Select linked elements copy to current model",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "3b75ee5376ff4615989f7cbfec8f9df8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e59b5c9b94da492fb57194da67dad476",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Copyright(c) 2017, Dimitar Venkov\r\n# @5devene, dimitar.ven@gmail.com\r\n# www.badmonkeys.net\r\n# Adjusted to work solely in Python by Mike Meyers, MikeM_134@hotmail.com\r\n\r\nimport clr\r\n\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nfrom System.Collections.Generic import List\r\n\r\n\r\nsel1 = uidoc.Selection\r\not1 = Selection.ObjectType.Element\r\not2 = Selection.ObjectType.LinkedElement\r\nli_ref = sel1.PickObject(ot1, \"Select a link instance first.\")\r\nlink1 = doc.GetElement(li_ref.ElementId)\r\nif isinstance(link1, RevitLinkInstance):\r\n\tel_ref = sel1.PickObjects(ot2, \"Select the linked elements and press Finish.\")\r\n\tlinkDoc = link1.GetLinkDocument()\r\n\tLel_id = [r1.LinkedElementId for r1 in el_ref]\r\n\ttf1 = link1.GetTotalTransform()\r\n\t\r\nelse:\r\n\tOUT = \"Failed to pick a linked instance\", None\r\n\t\r\neId = List[ElementId]()\r\nfor e in Lel_id:\r\n\t\r\n\teId.Add(e)\r\n\t\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ncopy = ElementTransformUtils.CopyElements(linkDoc, eId, doc, tf1, None)\r\nTransactionManager.Instance.TransactionTaskDone()\r\nOUT = []\r\nfor i in copy:\r\n\te = doc.GetElement(i)\r\n\tif e is not None:\r\n\t\tOUT.append(e.ToDSType(False))\t\r\n\t\r\n\t",
+      "VariableInputPorts": true,
+      "Id": "9286293e8efd422b949ff305a3e5f7d6",
+      "Inputs": [
+        {
+          "Id": "2a5bcb2c7a6a4ad7afe9350ddf32354b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a7c48e6f316144d9902a99da4340f127",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "e59b5c9b94da492fb57194da67dad476",
+      "End": "2a5bcb2c7a6a4ad7afe9350ddf32354b",
+      "Id": "a2435ebdd4354526a11ec9b6ec7542db"
+    }
+  ],
+  "Dependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.0.4.12684",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Boolean",
+        "Id": "3b75ee5376ff4615989f7cbfec8f9df8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -253.08559080469959,
+        "Y": -22.357286170317764
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Get Link Elements, copy to current model",
+        "Id": "9286293e8efd422b949ff305a3e5f7d6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -109.31693415287293,
+        "Y": -22.488712809518788
+      }
+    ],
+    "Annotations": [],
+    "X": 589.61053621892916,
+    "Y": 243.84693928345894,
+    "Zoom": 1.9227341894735752
+  }
+}
