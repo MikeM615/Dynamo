@@ -2,7 +2,7 @@
   "Uuid": "c0252d9a-275b-408c-afdd-7e3e74be8d84",
   "IsCustomNode": false,
   "Description": null,
-  "Name": "MM - Python-By Workset Get Parameter Values",
+  "Name": "MM - Python - By Workset Get Parameter Values",
   "ElementResolver": {
     "ResolutionMap": {}
   },
