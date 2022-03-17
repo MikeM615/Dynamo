@@ -1,0 +1,253 @@
+{
+  "Uuid": "87df58b9-08b1-452b-b2cc-a9254df90026",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "MM - Python - Set View Filter by Name",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "83988f46aba54c2e9f7fbeb417ba3de4",
+      "Name": "Parameter String",
+      "Type": "string",
+      "Value": "Sub-Discipline",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    },
+    {
+      "Id": "1c6a84d7882844a6aaa1dc0f7ce6430b",
+      "Name": "Search Value",
+      "Type": "string",
+      "Value": "Seismic Hangers SQD",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    },
+    {
+      "Id": "f67e87a1331c45a0b755450dd38ac175",
+      "Name": "View Filter Name",
+      "Type": "string",
+      "Value": "SQD Seismic and Supplemental",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Sub-Discipline",
+      "Id": "83988f46aba54c2e9f7fbeb417ba3de4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "466cb16602a044b8a22224528e4c9b9e",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Seismic Hangers SQD",
+      "Id": "1c6a84d7882844a6aaa1dc0f7ce6430b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a11b25c800cf470ca922527e528186da",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nfrom System.Collections.Generic import List\r\nsearchValue = IN[0]\r\nparamName = IN[1]\r\nviewFilterName = IN[2]\r\n\r\nviewElems = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).WhereElementIsNotElementType().ToElements()\r\nviewFilters = FilteredElementCollector(doc).OfClass(ParameterFilterElement).WhereElementIsNotElementType().ToElements()\r\nt0 = []\r\nt1 = []\r\nfor vF in viewFilters:\r\n\tfilter = vF.Name\r\n\tif filter == viewFilterName:\r\n\t\tfor vE in viewElems:\r\n\t\t    view = vE.LookupParameter(paramName).AsValueString()\r\n\t\t    if view == searchValue: \r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)    \r\n\t\t\t\tvE.AddFilter(vF.Id)\r\n\t\t\t\tvE.SetFilterVisibility(vF.Id, False);\r\n\t\t\t\t\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\r\n\r\nOUT = \"Success\"",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "d903b489f5ed46009cac8419fb934b63",
+      "Inputs": [
+        {
+          "Id": "c0308576e4b649d59391d6c9aac012f8",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "426eb7870e274f16baa8455dfb01f79a",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "747221b8bb624cc3b4e452d691bad5f0",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9f399549d0d74f60b813729445750f0d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "SQD Seismic and Supplemental",
+      "Id": "f67e87a1331c45a0b755450dd38ac175",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0e2f87d9f1864166b89d582323d67888",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "466cb16602a044b8a22224528e4c9b9e",
+      "End": "426eb7870e274f16baa8455dfb01f79a",
+      "Id": "cbda441315af4b499a00e107bbcef934"
+    },
+    {
+      "Start": "a11b25c800cf470ca922527e528186da",
+      "End": "c0308576e4b649d59391d6c9aac012f8",
+      "Id": "04deb6094f8742909c93fe0dc35821dc"
+    },
+    {
+      "Start": "0e2f87d9f1864166b89d582323d67888",
+      "End": "747221b8bb624cc3b4e452d691bad5f0",
+      "Id": "ae8ee0bb42fa4074ae18602c6e0d1aad"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.12",
+      "Data": {}
+    }
+  ],
+  "Author": "",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.12.0.5650",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter String",
+        "Id": "83988f46aba54c2e9f7fbeb417ba3de4",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 356.04516882656759,
+        "Y": 176.36554989646595
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Search Value",
+        "Id": "1c6a84d7882844a6aaa1dc0f7ce6430b",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 362.80126559782622,
+        "Y": 115.71912726127994
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Python Script",
+        "Id": "d903b489f5ed46009cac8419fb934b63",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 562.68077469016248,
+        "Y": 138.56660764507194
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "View Filter Name",
+        "Id": "f67e87a1331c45a0b755450dd38ac175",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 314.83053718428727,
+        "Y": 233.24174156281288
+      }
+    ],
+    "Annotations": [],
+    "X": 57.750365793327433,
+    "Y": 70.051119655099654,
+    "Zoom": 1.2782990176939413
+  }
+}
