@@ -1,0 +1,335 @@
+{
+  "Uuid": "fb14d414-8d46-4af8-a4aa-912f581a0b12",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Change Link to Halftone",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CustomNodes.Function, DynamoCore",
+      "FunctionSignature": "76cc7887-c71c-402b-9545-9016278b66f9",
+      "FunctionType": "Graph",
+      "NodeType": "FunctionNode",
+      "Id": "e27509d5bc9744c99d078a6efd344ac6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "352334b15773451eb580177dd307323a",
+          "Name": "Drafting Views",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b61415e73afa4d58b8eb1bad377e278b",
+          "Name": "Details",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "26862f4957cb4b66aa32c729c3cb5e08",
+          "Name": "Cost Reports",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7d53b45faffe47e79110997b389359ae",
+          "Name": "Column Schedules",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e8afc2219d4f47529c74ca18c6ad3fb4",
+          "Name": "Ceiling Plans",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7b0ee82903184b519b99e6e4d3b09010",
+          "Name": "Area Plans",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9c9c5137d4d24f448bb66fd61c2b1930",
+          "Name": "Panel Schedules",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b3099de429234f629efd897bcfc6cca6",
+          "Name": "Drawing Sheets",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "adc7db4a33b4413384de72cc388ca0f0",
+          "Name": "Loads Reports",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1628fc1162764efe9be8b6ba396f0bb7",
+          "Name": "Legends",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "afebd9b56fc742b78ef035b2b1268508",
+          "Name": "Internal Views",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f3c05965836a4b6c9f8eed506fa6a4f4",
+          "Name": "Floor Plans",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4f8bab748a7e4176968be2524b38b4e0",
+          "Name": "Renderings",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9d02f8bc7c9b4807822aaf4c71f08825",
+          "Name": "Pressure Loss Reports",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7a57cb44a597430a97e64ccc53d5033c",
+          "Name": "Walkthroughs",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "aab6dc2716e74140bf4ebf5917289bae",
+          "Name": "Elevations",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "826bb7f91d9e413c9cc2cc28009be96a",
+          "Name": "Undefined Views",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4a76fc49b0374fadaebb07cc6187db9c",
+          "Name": "3D Views",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "cd59ebe02ee64c098de97e7743109dbd",
+          "Name": "Sections",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7de953008c834f3ab5a8c1270b0af965",
+          "Name": "Schedules",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f367cea6f200442c9b8deb60691a681c",
+          "Name": "Engineering Plans",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5c14f3acff854b2ebea2a70bc8b02f2e",
+          "Name": "Reports",
+          "Description": "return value",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": ""
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nviewElems = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).WhereElementIsNotElementType().ToElements()\r\n\r\nlinkInstance = FilteredElementCollector(doc).OfClass(RevitLinkInstance).WhereElementIsNotElementType().ToElementIds()\r\n\r\n\r\noGS = OverrideGraphicSettings().SetHalftone(True)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)    \r\n#try:\r\nfor vE in viewElems:\r\n    for lI in linkInstance:\r\n        vE.SetElementOverrides(lI, oGS)\r\n#except Exception as e:\r\n#    OUT = 'Failed to override' + str(e) \r\n    \r\nTransactionManager.Instance.TransactionTaskDone()\r\n# Assign your output to the OUT variable.\r\nOUT = \"Success\"",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "a4134b8e115448aa8f670744b2cab7fa",
+      "Inputs": [
+        {
+          "Id": "8c2c08f3d7554824bf33439143c65478",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1bc3c2eead2642f3b4d8dcfb1c0f666f",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [
+    "76cc7887-c71c-402b-9545-9016278b66f9"
+  ],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "DynamoDots",
+      "Version": "2020.1.3",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "e27509d5bc9744c99d078a6efd344ac6"
+      ]
+    }
+  ],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.12",
+      "Data": {}
+    }
+  ],
+  "Author": "None provided",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.12.0.5650",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "GetAllViews",
+        "Id": "e27509d5bc9744c99d078a6efd344ac6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 308.02260502264653,
+        "Y": -104.47716222849152
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Set links to halftone in all views",
+        "Id": "a4134b8e115448aa8f670744b2cab7fa",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1142.1652617786858,
+        "Y": -56.927232772960139
+      }
+    ],
+    "Annotations": [],
+    "X": -684.53449995124834,
+    "Y": 442.36085342140206,
+    "Zoom": 0.80938626930157032
+  }
+}
