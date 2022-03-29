@@ -11,15 +11,8 @@
       "Id": "4225cf17c23c4a0ea8056f6b25147250",
       "Name": "CSV File Path",
       "Type": "string",
-      "Value": "C:\\Users\\mmeyers\\Downloads\\MM - CSV to Parameter Test.csv",
+      "Value": "..\\..\\..\\..\\Downloads\\MM - CSV to Parameter Test.csv",
       "Description": "Allows you to select a file on the system to get its filename"
-    },
-    {
-      "Id": "bf7ec8a287ee41dbb2964ddd1a1aa197",
-      "Name": "Row Number for Parameter Value to Lookup (Whole number only):",
-      "Type": "string",
-      "Value": "2",
-      "Description": "Creates a string."
     },
     {
       "Id": "a6904e20306f4dd1b2e1f74f8de1584b",
@@ -34,7 +27,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
       "HintPath": "C:\\Users\\mmeyers\\Downloads\\MM - CSV to Parameter Test.csv",
-      "InputValue": "C:\\Users\\mmeyers\\Downloads\\MM - CSV to Parameter Test.csv",
+      "InputValue": "..\\..\\..\\..\\Downloads\\MM - CSV to Parameter Test.csv",
       "NodeType": "ExtensionNode",
       "Id": "4225cf17c23c4a0ea8056f6b25147250",
       "Inputs": [],
@@ -75,26 +68,6 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "2",
-      "Id": "bf7ec8a287ee41dbb2964ddd1a1aa197",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "843cd8db080d4baa95b52f53e3cf2e37",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Creates a string."
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
       "InputValue": "A",
       "Id": "a6904e20306f4dd1b2e1f74f8de1584b",
       "Inputs": [],
@@ -115,7 +88,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "#portion of script covering find element containing parameter value taken from MEPover FilterStringEquals node.\r\n\r\nimport clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\nimport os\r\nimport System \r\nimport System.Collections\r\n#Access to Revit Document\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n#To Get Doc, UI and Application Objects\r\nfrom RevitServices.Persistence import DocumentManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n#Needed to make any changes in Revit\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference(\"RevitNodes\")\r\nimport StringIO\r\nfrom System.IO import FileInfo\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *;\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\nfrom System.Collections.Generic import List\r\nimport csv\r\nfrom System.IO import FileInfo\r\n\r\n#Get CSV Path, Param Row Letter, ParamVal Column Number \r\nfilePath = IN[0]\r\nparamName = IN[1].lower()\r\npNToInt = ord(paramName)-97#lowecase a starts at 97 in ASCII\r\nparamValCell = int(IN[2])-1#subtract 1 to normalize numbers (Revit lists start with 0 not 1)\r\n\r\n#get CSV Info\r\nwith open(filePath) as csvCountFile:\r\n\tdelReader = csv.reader(csvCountFile, delimiter=',')\r\n\tcolumns = len(next(delReader))-1\r\n\tdata = list(delReader)\r\n\trows = len(data)\r\n\tdel delReader\r\n\tcsvCountFile.close()\r\n\r\ncsvData = []\r\nwith open(filePath) as csvFile:\r\n\tcsvReader = csv.reader(csvFile, delimiter=',')\r\n\tfor row in csvReader:\r\n\t\tcsvData.append(row)\r\n\r\nii = 0\r\nwhile ii < rows:\r\n\tpVC\t= paramValCell + ii\r\n\t#find Elements with Value from CSV\r\n\tsearch = csvData[pNToInt][0]\r\n\tstring = csvData[pVC][pNToInt]\r\n\t\r\n\r\n\tcase = IN[3]\r\n\tbips = System.Enum.GetValues(BuiltInParameter)\r\n\t\r\n\tbm = doc.ParameterBindings\r\n\tbmlist = bm.ForwardIterator()\r\n\tparamId = None\r\n\ttestout = []\r\n\twhile bmlist.MoveNext():\r\n\t\tbinddef = bmlist.Key\r\n\t\ttestout.append(binddef.Name)\r\n\t\tif binddef.Name == search:\r\n\t\t\tparamId = binddef.Id\r\n\t\t\tbreak\r\n\t\r\n\tparam = None\r\n\tif paramId == None:\r\n\t\tbiplist = []\r\n\t\tfor bip in bips:\r\n\t\t\ttry:\r\n\t\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\t\texcept:\r\n\t\t\t\tcontinue\r\n\t\t\tif name == search:\r\n\t\t\t\tbiplist.append(bip)\r\n\t\r\n\t\r\n\tsharedparamrule = SharedParameterApplicableRule(search)\r\n\tevaluator = FilterStringEquals()\r\n\t\r\n\tparameter = None\r\n\tif paramId == None and len(biplist) == 0:\r\n\t\tcoll = FilteredElementCollector(doc)\r\n\t\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\t\r\n\t\tfor param in sharedparams:\r\n\t\t\tname = param.GetDefinition().Name\r\n\t\t\tif name == search:\r\n\t\t\t\tparameter = param\r\n\t\t\r\n\t\tif parameter != None:\r\n\t\t\truleslist = List[FilterRule]()\r\n\t\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\r\n\t\t\truleslist.Add(filterrule)\r\n\t\t\truleslist.Add(sharedparamrule)\r\n\t\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\t\tcollector = FilteredElementCollector(doc)\r\n\t\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\t\r\n\t\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\tcollector2.UnionWith(collector)\r\n\t\r\n\telif paramId == None:\r\n\t\tfilterList = List[ElementFilter]()\r\n\t\tfor param in biplist:\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\tfilterList.Add(paramFilter)\r\n\t\t\t\t\r\n\t\torFilter = LogicalOrFilter(filterList)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(orFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(orFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(paramId)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\r\n\t\r\n\tif parameter == None and paramId == None and len(biplist) == 0:\r\n\t\tOUT = \"Does not work with non-shared family parameters\"\r\n\telse:\r\n\t\telements = collector2.ToElements()\r\n\t\r\n\telemsChanged = []\r\n\tresults = [] #sets a new variable to append some useful info into\r\n\timport traceback #imports the traceback module so we can find out why each item fails\r\n\tfor e in elements: #starts a loop to work over the elements\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\ttry: #starts the list of stuff to try\r\n\t\t\ti = 0  #resets i to zero\r\n\t\t\twhile i < columns: #while i is less than the column count perform the offset items below\r\n\t\t\t  param = csvData[0][i] #gets the parameter in question from the CSV data\r\n\t\t\t  val = csvData[pVC][i] #gets the value from the csvData\r\n\t\t\t  e.LookupParameter(param).Set(val) #attempts to set the element's parameter to the given value\r\n\t\t\t  i+=1 #increments i by one\r\n\t\t\telemsChanged.Add(e) #appends the element to the elemsChanged list\r\n\t\t\tresults.append(\"All set\") #appends an informative message to the results list\r\n\t\t\t\r\n\t\texcept: #if the 'try' statement above failed, perform the offset items below\r\n\t\t\tmessage = traceback.format_exc() #gets the failure message from the memory\r\n\t\t\telemsChanged.Add(None) #adds an empty item (null in Dynamo) to the elemsChanged list (keeping your list structure in tact)\r\n\t\t\tresults.append(message) #appends the traceback message to the results list\r\n\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\tii += 1\r\n\r\nOUT = search, string, elemsChanged, elements, results\r\n",
+      "Code": "#portion of script covering find element containing parameter value taken from MEPover FilterStringEquals node.\r\n\r\nimport clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\nimport os\r\nimport System \r\nimport System.Collections\r\n#Access to Revit Document\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n#To Get Doc, UI and Application Objects\r\nfrom RevitServices.Persistence import DocumentManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n#Needed to make any changes in Revit\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference(\"RevitNodes\")\r\nimport StringIO\r\nfrom System.IO import FileInfo\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *;\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\nfrom System.Collections.Generic import List\r\nimport csv\r\nfrom System.IO import FileInfo\r\n\r\n#Get CSV Path, Param Row Letter, ParamVal Column Number \r\nfilePath = IN[0]\r\nparamName = IN[1].lower()\r\npNToInt = ord(paramName)-97#lowecase a starts at 97 in ASCII\r\n\r\n#get CSV Info\r\nwith open(filePath) as csvCountFile:\r\n\tdelReader = csv.reader(csvCountFile, delimiter=',')\r\n\tcolumns = len(next(delReader))\r\n\tdata = list(delReader)\r\n\trows = len(data)\r\n\tdel delReader\r\n\tcsvCountFile.close()\r\n\r\ncsvData = []\r\nwith open(filePath) as csvFile:\r\n\tcsvReader = csv.reader(csvFile, delimiter=',')\r\n\tfor row in csvReader:\r\n\t\tcsvData.append(row)\r\n\r\ni = 0\r\nwhile i < rows:\r\n\tpVC\t= 1 + i\r\n\t#find Elements with Value from CSV\r\n\tsearch = csvData[pNToInt][0]\r\n\tstring = csvData[pVC][pNToInt]\r\n\t\r\n\r\n\tcase = IN[2]\r\n\tbips = System.Enum.GetValues(BuiltInParameter)\r\n\t\r\n\tbm = doc.ParameterBindings\r\n\tbmlist = bm.ForwardIterator()\r\n\tparamId = None\r\n\ttestout = []\r\n\twhile bmlist.MoveNext():\r\n\t\tbinddef = bmlist.Key\r\n\t\ttestout.append(binddef.Name)\r\n\t\tif binddef.Name == search:\r\n\t\t\tparamId = binddef.Id\r\n\t\t\tbreak\r\n\t\r\n\tparam = None\r\n\tif paramId == None:\r\n\t\tbiplist = []\r\n\t\tfor bip in bips:\r\n\t\t\ttry:\r\n\t\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\t\texcept:\r\n\t\t\t\tcontinue\r\n\t\t\tif name == search:\r\n\t\t\t\tbiplist.append(bip)\r\n\t\r\n\t\r\n\tsharedparamrule = SharedParameterApplicableRule(search)\r\n\tevaluator = FilterStringEquals()\r\n\t\r\n\tparameter = None\r\n\tif paramId == None and len(biplist) == 0:\r\n\t\tcoll = FilteredElementCollector(doc)\r\n\t\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\t\r\n\t\tfor param in sharedparams:\r\n\t\t\tname = param.GetDefinition().Name\r\n\t\t\tif name == search:\r\n\t\t\t\tparameter = param\r\n\t\t\r\n\t\tif parameter != None:\r\n\t\t\truleslist = List[FilterRule]()\r\n\t\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\r\n\t\t\truleslist.Add(filterrule)\r\n\t\t\truleslist.Add(sharedparamrule)\r\n\t\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\t\tcollector = FilteredElementCollector(doc)\r\n\t\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\t\r\n\t\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\tcollector2.UnionWith(collector)\r\n\t\r\n\telif paramId == None:\r\n\t\tfilterList = List[ElementFilter]()\r\n\t\tfor param in biplist:\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\tfilterList.Add(paramFilter)\r\n\t\t\t\t\r\n\t\torFilter = LogicalOrFilter(filterList)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(orFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(orFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(paramId)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string, case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\r\n\t\r\n\tif parameter == None and paramId == None and len(biplist) == 0:\r\n\t\tOUT = \"Does not work with non-shared family parameters\"\r\n\telse:\r\n\t\telements = collector2.ToElements()\r\n\t\r\n\telemsChanged = []\r\n\tresults = [] \r\n\timport traceback \r\n\tfor e in elements: \r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\ttry: \r\n\t\t\tii = 0  \r\n\t\t\twhile ii < columns: \r\n\t\t\t\tparam = csvData[0][ii] \r\n\t\t\t\tval = csvData[pVC][ii]\r\n\t\t\t\tif e.LookupParameter(param).StorageType == StorageType.Integer:\r\n\t\t\t\t\te.LookupParameter(param).Set(int(val))\r\n\t\t\t\telif e.LookupParameter(param).StorageType == StorageType.String:\r\n\t\t\t\t\te.LookupParameter(param).Set(str(val))\r\n\t\t\t\telif e.LookupParameter(param).StorageType == StorageType.Double:\t\r\n\t\t\t\t\te.LookupParameter(param).Set(float(val))\t\r\n\t\t\t\telse:\r\n\t\t\t\t\te.LookupParameter(param).SetValueString(val)\t\t\t  \r\n\t\t\t\tii+=1 \r\n\t\t\telemsChanged.Add(e) \r\n\t\t\tresults.append(\"All set\") \r\n\t\t\r\n\t\texcept: \r\n\t\t\tmessage = traceback.format_exc() \r\n\t\t\telemsChanged.Add(None) \r\n\t\t\tresults.append(message) \r\n\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\ti += 1\r\n\r\nOUT = csvData, search, string, elemsChanged, elements, results\r\n\r\n",
       "VariableInputPorts": true,
       "Id": "46cdc49734f4470cad2267d79c27fe39",
       "Inputs": [
@@ -145,15 +118,6 @@
           "Level": 2,
           "UseLevels": false,
           "KeepListStructure": false
-        },
-        {
-          "Id": "6c964896a6d24559bc413feb6ba83a03",
-          "Name": "IN[3]",
-          "Description": "Input #3",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
         }
       ],
       "Outputs": [
@@ -179,13 +143,8 @@
     },
     {
       "Start": "fb3d986a287e499d9f6d1bd3dbe7b601",
-      "End": "6c964896a6d24559bc413feb6ba83a03",
-      "Id": "0dbb27e7cecb4e7aa068114f7d82ae63"
-    },
-    {
-      "Start": "843cd8db080d4baa95b52f53e3cf2e37",
       "End": "406d18f04e744dba9477631cc42ae073",
-      "Id": "867f28a8c1444d32839831305d5a5f97"
+      "Id": "51d6754dd52c488b8816ca141fdb0caa"
     },
     {
       "Start": "e4d82ce538e04a2b8751c740cd67fda6",
@@ -224,8 +183,8 @@
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 410.06130211235524,
-        "Y": 267.39462179410083
+        "X": 406.53221278671145,
+        "Y": 232.98600086907342
       },
       {
         "ShowGeometry": true,
@@ -234,18 +193,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 408.95589025931173,
-        "Y": 466.694205315711
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Row Number for Parameter Value to Lookup (Whole number only):",
-        "Id": "bf7ec8a287ee41dbb2964ddd1a1aa197",
-        "IsSetAsInput": true,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 406.16521878870208,
-        "Y": 407.9984061441437
+        "X": 456.68050664716947,
+        "Y": 380.466852603651
       },
       {
         "ShowGeometry": true,
@@ -254,23 +203,23 @@
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 407.49436204761452,
-        "Y": 350.92166350943967
+        "X": 408.37663437902546,
+        "Y": 312.10168092735745
       },
       {
         "ShowGeometry": true,
-        "Name": "WIP",
+        "Name": "Python - Read CSV, find Elements with Param Name/Value Pair, and push values to remainder of Param Name/Value pairs in CSV",
         "Id": "46cdc49734f4470cad2267d79c27fe39",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1050.2315309668049,
-        "Y": 378.37098742958665
+        "X": 808.205474496267,
+        "Y": 289.02720000043547
       }
     ],
     "Annotations": [],
-    "X": -232.45850551860258,
-    "Y": 53.508498414285043,
-    "Zoom": 0.8003259093695112
+    "X": -227.69106770535109,
+    "Y": -36.699519565745049,
+    "Zoom": 0.97362689680812264
   }
 }
