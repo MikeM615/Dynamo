@@ -109,6 +109,13 @@
       "StepValue": 0.1,
       "NumberType": "Double",
       "Description": "A slider that produces numeric values."
+    },
+    {
+      "Id": "afe5c9887e0a4fc790daee3dccc922ba",
+      "Name": "Adjust View Range?",
+      "Type": "boolean",
+      "Value": "false",
+      "Description": "Selection between a true and false."
     }
   ],
   "Outputs": [],
@@ -176,7 +183,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Structure import *\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n#uiapp = DocumentManager.Instance.CurrentUIApplication\r\n\r\n\r\n#Inputs\r\nvName = IN[0]\r\nvSD = IN[1]\r\nlvl = IN[2]\r\nviewTypeName = IN[3]\r\nvArea = IN[4]\r\nvTC = IN[5]\r\nscopeBoo = IN[6]\r\nscopeName = IN[7]\r\ndetailLevel = IN[8]\r\nvTBoo = IN[9]\r\nvTN = IN[10]\r\ntof = IN[11]\r\nbof = IN[12]\r\ncof = IN[13]\r\n\r\n\r\n\r\nresult = []\r\n#Find ViewType by name to get elementID\r\nviewFamilyTypes = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()\r\nfor viewType in viewFamilyTypes:\r\n\ttypeName = viewType.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString()\r\n\tif typeName == viewTypeName:\r\n\t\tviewFamilyTypeId = viewType.Id\r\n\r\ndef setParamVal(element, parameter, value):\r\n\telement.LookupParameter(parameter).Set(value)\r\n\r\ndef modViewrange(vp,tof,bof,cof):\r\n\t#v = UnwrapElement(vp)\r\n\t#getting the viewrange of the view\r\n\tviewrange = vp.GetViewRange()\r\n\tasslvl = vp.GenLevel\r\n\t#Setting top clip plane of the viewrange\r\n\t#\tSetting level of topclip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.TopClipPlane,asslvl.Id)\r\n\t#\tsetting offset of top clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.TopClipPlane,tof)\r\n\t#Setting bottom clip plane of the viewrange\r\n\t#\tSetting level of bottom clip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.BottomClipPlane,asslvl.Id)\r\n\t#\tsetting offset of bottom clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.BottomClipPlane,bof)\r\n\tviewrange.SetOffset(PlanViewPlane.CutPlane,cof)\r\n\t#Setting view depth plane of the viewrange\r\n\t#\tSetting level of view depth plane\r\n\tviewrange.SetLevelId(PlanViewPlane.ViewDepthPlane,asslvl.Id)\r\n\t#\tsetting offset of view depth plane\r\n\tif bof < 0 or IN[13]:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,bof)\r\n\telse:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,0)\r\n\t#Applying the viewrange to the view\r\n\tvp.SetViewRange(viewrange)\r\n\r\n\r\n\r\n\r\n\r\n#Create View\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ncreateView = ViewPlan.Create(doc, viewFamilyTypeId , ElementId(lvl.Id))\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\ntry:\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\trenameView = setParamVal(createView,\"View Name\", vName)\r\n\tremoveVT = setParamVal(createView,\"View Template\", ElementId(-1))\r\n\tsetSD = setParamVal(createView,\"Sub-Discipline\", vSD)\r\n\tsetLvl = setParamVal(createView,\"Level\", lvl.Name)\r\n\tsetArea = setParamVal(createView,\"Area\", vArea)\r\n\tsetTC = setParamVal(createView,\"Trade Code\", vTC)\r\n\tsetDL = setParamVal(createView,\"Detail Level\", detailLevel)\r\n\t\r\n\t\r\n\tif scopeBoo == True:\r\n\t\ttry:\r\n\t\t\tscopeBoxes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_VolumeOfInterest).ToElements()\r\n\t\t\tfor sBN in scopeBoxes:\r\n\t\t\t\tsBName = sBN.Name\r\n\t\t\t\tif sBName == scopeName:\r\n\t\t\t\t\tsBId = sBN.Id\r\n\t\t\tsetScope = setParamVal(createView,\"Scope Box\", sBId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No Scope Box by that name existed\")\r\n\r\n\tif vTBoo == True:\r\n\t\ttry:\r\n\t\t\tviewTemplate = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).ToElements()\r\n\t\t\t\r\n\t\t\tfor vT in viewTemplate:\r\n\t\t\t\tif vT.IsTemplate == True:\r\n\t\t\t\t\tvTName = vT.Name\r\n\t\t\t\t\tif vTName == vTN:\r\n\t\t\t\t\t\tvTId = vT.Id\r\n\t\t\tsetvT = setParamVal(createView,\"View Template\", vTId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No View Template by that name existed\")\r\n\t\r\n\r\n\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\nexcept:\r\n\tresult.append(\"Parameter Name not Found\")\r\n\t\r\ntry:\t\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tmodViewrange(createView,tof,bof,cof)\r\n\tTransactionManager.Instance.TransactionTaskDone()\t\r\nexcept:\r\n\timport traceback\r\n\tmessage = traceback.format_exc() \r\n\tresult.append(message)\r\n\r\n\r\n\r\n\r\nTransactionManager.Instance.ForceCloseTransaction()\r\nuidoc.RequestViewChange(createView)\r\n\r\nresult.append(\"All Parameters Set Successfully\")\r\n\r\nOUT = createView, result\r\n",
+      "Code": "import clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Structure import *\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n#uiapp = DocumentManager.Instance.CurrentUIApplication\r\n\r\n\r\n#Inputs\r\nvName = IN[0]\r\nvSD = IN[1]\r\nlvl = IN[2]\r\nviewTypeName = IN[3]\r\nvArea = IN[4]\r\nvTC = IN[5]\r\nscopeBoo = IN[6]\r\nscopeName = IN[7]\r\ndetailLevel = IN[8]\r\nvTBoo = IN[9]\r\nvTN = IN[10]\r\ntof = IN[11]\r\nbof = IN[12]\r\ncof = IN[13]\r\nvRBoo = IN[14]\r\n\r\n\r\nresult = []\r\n#Find ViewType by name to get elementID\r\nviewFamilyTypes = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()\r\nfor viewType in viewFamilyTypes:\r\n\ttypeName = viewType.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString()\r\n\tif typeName == viewTypeName:\r\n\t\tviewFamilyTypeId = viewType.Id\r\n\r\ndef setParamVal(element, parameter, value):\r\n\telement.LookupParameter(parameter).Set(value)\r\n\r\ndef modViewrange(vp,tof,bof,cof):\r\n\t#v = UnwrapElement(vp)\r\n\t#getting the viewrange of the view\r\n\tviewrange = vp.GetViewRange()\r\n\tasslvl = vp.GenLevel\r\n\t#Setting top clip plane of the viewrange\r\n\t#\tSetting level of topclip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.TopClipPlane,asslvl.Id)\r\n\t#\tsetting offset of top clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.TopClipPlane,tof)\r\n\t#Setting bottom clip plane of the viewrange\r\n\t#\tSetting level of bottom clip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.BottomClipPlane,asslvl.Id)\r\n\t#\tsetting offset of bottom clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.BottomClipPlane,bof)\r\n\tviewrange.SetOffset(PlanViewPlane.CutPlane,cof)\r\n\t#Setting view depth plane of the viewrange\r\n\t#\tSetting level of view depth plane\r\n\tviewrange.SetLevelId(PlanViewPlane.ViewDepthPlane,asslvl.Id)\r\n\t#\tsetting offset of view depth plane\r\n\tif bof < 0 or IN[13]:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,bof)\r\n\telse:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,0)\r\n\t#Applying the viewrange to the view\r\n\tvp.SetViewRange(viewrange)\r\n\r\n\r\n\r\n\r\n\r\n#Create View\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ncreateView = ViewPlan.Create(doc, viewFamilyTypeId , ElementId(lvl.Id))\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\ntry:\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\trenameView = setParamVal(createView,\"View Name\", vName)\r\n\tremoveVT = setParamVal(createView,\"View Template\", ElementId(-1))\r\n\tsetSD = setParamVal(createView,\"Sub-Discipline\", vSD)\r\n\tsetLvl = setParamVal(createView,\"Level\", lvl.Name)\r\n\tsetArea = setParamVal(createView,\"Area\", vArea)\r\n\tsetTC = setParamVal(createView,\"Trade Code\", vTC)\r\n\tsetDL = setParamVal(createView,\"Detail Level\", detailLevel)\r\n\t\r\n\t\r\n\tif scopeBoo == True:\r\n\t\ttry:\r\n\t\t\tscopeBoxes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_VolumeOfInterest).ToElements()\r\n\t\t\tfor sBN in scopeBoxes:\r\n\t\t\t\tsBName = sBN.Name\r\n\t\t\t\tif sBName == scopeName:\r\n\t\t\t\t\tsBId = sBN.Id\r\n\t\t\tsetScope = setParamVal(createView,\"Scope Box\", sBId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No Scope Box by that name existed\")\r\n\r\n\tif vTBoo == True:\r\n\t\ttry:\r\n\t\t\tviewTemplate = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).ToElements()\r\n\t\t\t\r\n\t\t\tfor vT in viewTemplate:\r\n\t\t\t\tif vT.IsTemplate == True:\r\n\t\t\t\t\tvTName = vT.Name\r\n\t\t\t\t\tif vTName == vTN:\r\n\t\t\t\t\t\tvTId = vT.Id\r\n\t\t\tsetvT = setParamVal(createView,\"View Template\", vTId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No View Template by that name existed\")\r\n\t\r\n\r\n\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\nexcept:\r\n\tresult.append(\"Parameter Name not Found\")\r\n\r\nif vRBoo == True:\t\r\n\ttry:\t\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\tmodViewrange(createView,tof,bof,cof)\r\n\t\tTransactionManager.Instance.TransactionTaskDone()\t\r\n\texcept:\r\n\t\timport traceback\r\n\t\tmessage = traceback.format_exc() \r\n\t\tresult.append(message)\r\n\r\n\r\n\r\n\r\nTransactionManager.Instance.ForceCloseTransaction()\r\nuidoc.RequestViewChange(createView)\r\n\r\nresult.append(\"All Parameters Set Successfully\")\r\n\r\nOUT = createView, result\r\n",
       "VariableInputPorts": true,
       "Id": "e233cff247824989b25ca983105c6cdb",
       "Inputs": [
@@ -301,6 +308,15 @@
           "Id": "89e178c95d1b47548ba7487361e3ff91",
           "Name": "IN[13]",
           "Description": "Input #13",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "35b90fe57f344d17a8ca79ef8904a769",
+          "Name": "IN[14]",
+          "Description": "Input #14",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -552,6 +568,26 @@
       ],
       "Replication": "Disabled",
       "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "afe5c9887e0a4fc790daee3dccc922ba",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7ad5d452c90e481cbd89d31330b60edb",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
     }
   ],
   "Connectors": [
@@ -624,6 +660,11 @@
       "Start": "af4b2e40a9724ef295fa4159633c6056",
       "End": "89e178c95d1b47548ba7487361e3ff91",
       "Id": "cac9c5a3e02b4f679638b3640c240456"
+    },
+    {
+      "Start": "7ad5d452c90e481cbd89d31330b60edb",
+      "End": "35b90fe57f344d17a8ca79ef8904a769",
+      "Id": "ca383c02826e40c5b721d1c49712ee27"
     }
   ],
   "Dependencies": [],
@@ -799,6 +840,16 @@
         "Excluded": false,
         "X": 350.65120501627666,
         "Y": 900.16628665990061
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Adjust View Range?",
+        "Id": "afe5c9887e0a4fc790daee3dccc922ba",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 515.3308553465788,
+        "Y": 956.52263599458388
       }
     ],
     "Annotations": [
@@ -827,13 +878,13 @@
         "Height": 881.70468663750853,
         "FontSize": 36.0,
         "InitialTop": 139.46160002239208,
-        "InitialHeight": 858.70468663750853,
+        "InitialHeight": 905.70468663750853,
         "TextblockHeight": 43.0,
         "Background": "#FFC1D676"
       }
     ],
-    "X": -365.0248290963732,
-    "Y": 0.44699691631365113,
+    "X": -173.0248290963732,
+    "Y": 53.446996916313651,
     "Zoom": 0.71868179506001628
   }
 }
