@@ -64,13 +64,6 @@
       "Description": "Creates a string."
     },
     {
-      "Id": "f5e1404a83b849528b3c19a09632a930",
-      "Name": "If True, View Template Name",
-      "Type": "string",
-      "Value": "Test",
-      "Description": "Creates a string."
-    },
-    {
       "Id": "ff261089e3544df7a389c1f67f56b8f8",
       "Name": "View Template?",
       "Type": "boolean",
@@ -78,8 +71,22 @@
       "Description": "Selection between a true and false."
     },
     {
-      "Id": "43f30e8126464de9917494f2711d505a",
-      "Name": "Top Offset in Feet",
+      "Id": "a11aa7418d8747bc926b7155b9740d17",
+      "Name": "If True, View Template Name",
+      "Type": "string",
+      "Value": "Test",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "a29e91250af94734a305dbe51383bdeb",
+      "Name": "Adjust View Range?",
+      "Type": "boolean",
+      "Value": "false",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "Id": "a9630d120d0c4558ae6d967ce7644662",
+      "Name": "If True, Top Offset in Feet",
       "Type": "number",
       "Value": "30",
       "MaximumValue": 100.0,
@@ -89,8 +96,8 @@
       "Description": "A slider that produces numeric values."
     },
     {
-      "Id": "7a145e45608f43c39d97479e38fb64b5",
-      "Name": "Bottom Offset in Feet",
+      "Id": "b1296d8e6b044f44b97de35fee2799c9",
+      "Name": "If True, Bottom Offset in Feet",
       "Type": "number",
       "Value": "0",
       "MaximumValue": 100.0,
@@ -100,8 +107,8 @@
       "Description": "A slider that produces numeric values."
     },
     {
-      "Id": "79e043276130407ab8241ae4951d46dc",
-      "Name": "Cut Plane in Feet",
+      "Id": "d26e371e47794eae851574fa15355310",
+      "Name": "If True, Cut Plane in Feet",
       "Type": "number",
       "Value": "10",
       "MaximumValue": 100.0,
@@ -109,13 +116,6 @@
       "StepValue": 0.1,
       "NumberType": "Double",
       "Description": "A slider that produces numeric values."
-    },
-    {
-      "Id": "afe5c9887e0a4fc790daee3dccc922ba",
-      "Name": "Adjust View Range?",
-      "Type": "boolean",
-      "Value": "false",
-      "Description": "Selection between a true and false."
     }
   ],
   "Outputs": [],
@@ -183,7 +183,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Structure import *\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n#uiapp = DocumentManager.Instance.CurrentUIApplication\r\n\r\n\r\n#Inputs\r\nvName = IN[0]\r\nvSD = IN[1]\r\nlvl = IN[2]\r\nviewTypeName = IN[3]\r\nvArea = IN[4]\r\nvTC = IN[5]\r\nscopeBoo = IN[6]\r\nscopeName = IN[7]\r\ndetailLevel = IN[8]\r\nvTBoo = IN[9]\r\nvTN = IN[10]\r\ntof = IN[11]\r\nbof = IN[12]\r\ncof = IN[13]\r\nvRBoo = IN[14]\r\n\r\n\r\nresult = []\r\n#Find ViewType by name to get elementID\r\nviewFamilyTypes = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()\r\nfor viewType in viewFamilyTypes:\r\n\ttypeName = viewType.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString()\r\n\tif typeName == viewTypeName:\r\n\t\tviewFamilyTypeId = viewType.Id\r\n\r\ndef setParamVal(element, parameter, value):\r\n\telement.LookupParameter(parameter).Set(value)\r\n\r\ndef modViewrange(vp,tof,bof,cof):\r\n\t#v = UnwrapElement(vp)\r\n\t#getting the viewrange of the view\r\n\tviewrange = vp.GetViewRange()\r\n\tasslvl = vp.GenLevel\r\n\t#Setting top clip plane of the viewrange\r\n\t#\tSetting level of topclip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.TopClipPlane,asslvl.Id)\r\n\t#\tsetting offset of top clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.TopClipPlane,tof)\r\n\t#Setting bottom clip plane of the viewrange\r\n\t#\tSetting level of bottom clip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.BottomClipPlane,asslvl.Id)\r\n\t#\tsetting offset of bottom clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.BottomClipPlane,bof)\r\n\tviewrange.SetOffset(PlanViewPlane.CutPlane,cof)\r\n\t#Setting view depth plane of the viewrange\r\n\t#\tSetting level of view depth plane\r\n\tviewrange.SetLevelId(PlanViewPlane.ViewDepthPlane,asslvl.Id)\r\n\t#\tsetting offset of view depth plane\r\n\tif bof < 0 or IN[13]:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,bof)\r\n\telse:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,0)\r\n\t#Applying the viewrange to the view\r\n\tvp.SetViewRange(viewrange)\r\n\r\n\r\n\r\n\r\n\r\n#Create View\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ncreateView = ViewPlan.Create(doc, viewFamilyTypeId , ElementId(lvl.Id))\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\ntry:\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\trenameView = setParamVal(createView,\"View Name\", vName)\r\n\tremoveVT = setParamVal(createView,\"View Template\", ElementId(-1))\r\n\tsetSD = setParamVal(createView,\"Sub-Discipline\", vSD)\r\n\tsetLvl = setParamVal(createView,\"Level\", lvl.Name)\r\n\tsetArea = setParamVal(createView,\"Area\", vArea)\r\n\tsetTC = setParamVal(createView,\"Trade Code\", vTC)\r\n\tsetDL = setParamVal(createView,\"Detail Level\", detailLevel)\r\n\t\r\n\t\r\n\tif scopeBoo == True:\r\n\t\ttry:\r\n\t\t\tscopeBoxes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_VolumeOfInterest).ToElements()\r\n\t\t\tfor sBN in scopeBoxes:\r\n\t\t\t\tsBName = sBN.Name\r\n\t\t\t\tif sBName == scopeName:\r\n\t\t\t\t\tsBId = sBN.Id\r\n\t\t\tsetScope = setParamVal(createView,\"Scope Box\", sBId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No Scope Box by that name existed\")\r\n\r\n\tif vTBoo == True:\r\n\t\ttry:\r\n\t\t\tviewTemplate = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).ToElements()\r\n\t\t\t\r\n\t\t\tfor vT in viewTemplate:\r\n\t\t\t\tif vT.IsTemplate == True:\r\n\t\t\t\t\tvTName = vT.Name\r\n\t\t\t\t\tif vTName == vTN:\r\n\t\t\t\t\t\tvTId = vT.Id\r\n\t\t\tsetvT = setParamVal(createView,\"View Template\", vTId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No View Template by that name existed\")\r\n\t\r\n\r\n\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\nexcept:\r\n\tresult.append(\"Parameter Name not Found\")\r\n\r\nif vRBoo == True:\t\r\n\ttry:\t\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\tmodViewrange(createView,tof,bof,cof)\r\n\t\tTransactionManager.Instance.TransactionTaskDone()\t\r\n\texcept:\r\n\t\timport traceback\r\n\t\tmessage = traceback.format_exc() \r\n\t\tresult.append(message)\r\n\r\n\r\n\r\n\r\nTransactionManager.Instance.ForceCloseTransaction()\r\nuidoc.RequestViewChange(createView)\r\n\r\nresult.append(\"All Parameters Set Successfully\")\r\n\r\nOUT = createView, result\r\n",
+      "Code": "import clr\r\nimport sys\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Structure import *\r\n\r\nclr.AddReference('RevitAPIUI')\r\nfrom Autodesk.Revit.UI import *\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\n#uiapp = DocumentManager.Instance.CurrentUIApplication\r\n\r\n\r\n#Inputs\r\nvName = IN[0]\r\nvSD = IN[1]\r\nlvl = IN[2]\r\nviewTypeName = IN[3]\r\nvArea = IN[4]\r\nvTC = IN[5]\r\nscopeBoo = IN[6]\r\nscopeName = IN[7]\r\ndetailLevel = IN[8]\r\nvTBoo = IN[9]\r\nvTN = IN[10]\r\ntof = IN[12]\r\nbof = IN[13]\r\ncof = IN[14]\r\nvRBoo = IN[11]\r\n\r\n\r\nresult = []\r\n#Find ViewType by name to get elementID\r\nviewFamilyTypes = FilteredElementCollector(doc).OfClass(ViewFamilyType).ToElements()\r\nfor viewType in viewFamilyTypes:\r\n\ttypeName = viewType.get_Parameter(BuiltInParameter.SYMBOL_NAME_PARAM).AsString()\r\n\tif typeName == viewTypeName:\r\n\t\tviewFamilyTypeId = viewType.Id\r\n\r\ndef setParamVal(element, parameter, value):\r\n\telement.LookupParameter(parameter).Set(value)\r\n\r\ndef modViewrange(vp,tof,bof,cof):\r\n\t#v = UnwrapElement(vp)\r\n\t#getting the viewrange of the view\r\n\tviewrange = vp.GetViewRange()\r\n\tasslvl = vp.GenLevel\r\n\t#Setting top clip plane of the viewrange\r\n\t#\tSetting level of topclip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.TopClipPlane,asslvl.Id)\r\n\t#\tsetting offset of top clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.TopClipPlane,tof)\r\n\t#Setting bottom clip plane of the viewrange\r\n\t#\tSetting level of bottom clip plane\r\n\tviewrange.SetLevelId(PlanViewPlane.BottomClipPlane,asslvl.Id)\r\n\t#\tsetting offset of bottom clip plane\r\n\tviewrange.SetOffset(PlanViewPlane.BottomClipPlane,bof)\r\n\tviewrange.SetOffset(PlanViewPlane.CutPlane,cof)\r\n\t#Setting view depth plane of the viewrange\r\n\t#\tSetting level of view depth plane\r\n\tviewrange.SetLevelId(PlanViewPlane.ViewDepthPlane,asslvl.Id)\r\n\t#\tsetting offset of view depth plane\r\n\tif bof < 0 or cof:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,bof)\r\n\telse:\r\n\t\tviewrange.SetOffset(PlanViewPlane.ViewDepthPlane,0)\r\n\t#Applying the viewrange to the view\r\n\tvp.SetViewRange(viewrange)\r\n\r\n\r\n\r\n\r\n\r\n#Create View\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ncreateView = ViewPlan.Create(doc, viewFamilyTypeId , ElementId(lvl.Id))\r\nTransactionManager.Instance.TransactionTaskDone()\r\n\r\ntry:\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\trenameView = setParamVal(createView,\"View Name\", vName)\r\n\tremoveVT = setParamVal(createView,\"View Template\", ElementId(-1))\r\n\tsetSD = setParamVal(createView,\"Sub-Discipline\", vSD)\r\n\tsetLvl = setParamVal(createView,\"Level\", lvl.Name)\r\n\tsetArea = setParamVal(createView,\"Area\", vArea)\r\n\tsetTC = setParamVal(createView,\"Trade Code\", vTC)\r\n\tsetDL = setParamVal(createView,\"Detail Level\", detailLevel)\r\n\t\r\n\t\r\n\tif scopeBoo == True:\r\n\t\ttry:\r\n\t\t\tscopeBoxes = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_VolumeOfInterest).ToElements()\r\n\t\t\tfor sBN in scopeBoxes:\r\n\t\t\t\tsBName = sBN.Name\r\n\t\t\t\tif sBName == scopeName:\r\n\t\t\t\t\tsBId = sBN.Id\r\n\t\t\tsetScope = setParamVal(createView,\"Scope Box\", sBId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No Scope Box by that name existed\")\r\n\r\n\tif vTBoo == True:\r\n\t\ttry:\r\n\t\t\tviewTemplate = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Views).ToElements()\r\n\t\t\t\r\n\t\t\tfor vT in viewTemplate:\r\n\t\t\t\tif vT.IsTemplate == True:\r\n\t\t\t\t\tvTName = vT.Name\r\n\t\t\t\t\tif vTName == vTN:\r\n\t\t\t\t\t\tvTId = vT.Id\r\n\t\t\tsetvT = setParamVal(createView,\"View Template\", vTId)\r\n\t\texcept:\r\n\t\t\tresult.append(\"No View Template by that name existed\")\r\n\t\r\n\r\n\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\nexcept:\r\n\tresult.append(\"Parameter Name not Found\")\r\n\r\nif vRBoo == True:\t\r\n\ttry:\t\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\tmodViewrange(createView,tof,bof,cof)\r\n\t\tTransactionManager.Instance.TransactionTaskDone()\t\r\n\texcept:\r\n\t\timport traceback\r\n\t\tmessage = traceback.format_exc() \r\n\t\tresult.append(message)\r\n\r\n\r\n\r\n\r\nTransactionManager.Instance.ForceCloseTransaction()\r\nuidoc.RequestViewChange(createView)\r\n\r\nresult.append(\"All Parameters Set Successfully\")\r\n\r\nOUT = createView, result\r\n",
       "VariableInputPorts": true,
       "Id": "e233cff247824989b25ca983105c6cdb",
       "Inputs": [
@@ -458,26 +458,6 @@
       "Description": "Creates a string."
     },
     {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
-      "InputValue": "Test",
-      "Id": "f5e1404a83b849528b3c19a09632a930",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "598a5eafc1684d558cc7ce51298aa4bd",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Creates a string."
-    },
-    {
       "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
       "NodeType": "BooleanInputNode",
       "InputValue": false,
@@ -498,6 +478,46 @@
       "Description": "Selection between a true and false."
     },
     {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Test",
+      "Id": "a11aa7418d8747bc926b7155b9740d17",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "db3aa3c3f114482cb279a35a12692bd2",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "a29e91250af94734a305dbe51383bdeb",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "041fead22d8448958f2cffc0fdc5363d",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
       "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
       "NodeType": "NumberInputNode",
       "NumberType": "Double",
@@ -505,11 +525,11 @@
       "MinimumValue": 0.0,
       "StepValue": 0.1,
       "InputValue": 30.0,
-      "Id": "43f30e8126464de9917494f2711d505a",
+      "Id": "a9630d120d0c4558ae6d967ce7644662",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "c11a46728c7442809f2485f629a60543",
+          "Id": "73c01b46ec2f4ba3b01835e40a16d9ee",
           "Name": "",
           "Description": "Double",
           "UsingDefaultValue": false,
@@ -529,11 +549,11 @@
       "MinimumValue": 0.0,
       "StepValue": 0.1,
       "InputValue": 0.0,
-      "Id": "7a145e45608f43c39d97479e38fb64b5",
+      "Id": "b1296d8e6b044f44b97de35fee2799c9",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "e3d558ee69694d939acece1cd7624d6d",
+          "Id": "50af81571a964f84958fa5760545b47c",
           "Name": "",
           "Description": "Double",
           "UsingDefaultValue": false,
@@ -553,11 +573,11 @@
       "MinimumValue": 0.0,
       "StepValue": 0.1,
       "InputValue": 10.0,
-      "Id": "79e043276130407ab8241ae4951d46dc",
+      "Id": "d26e371e47794eae851574fa15355310",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "af4b2e40a9724ef295fa4159633c6056",
+          "Id": "27c4f21221a447f189a841696514f602",
           "Name": "",
           "Description": "Double",
           "UsingDefaultValue": false,
@@ -568,26 +588,6 @@
       ],
       "Replication": "Disabled",
       "Description": "A slider that produces numeric values."
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
-      "NodeType": "BooleanInputNode",
-      "InputValue": false,
-      "Id": "afe5c9887e0a4fc790daee3dccc922ba",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "7ad5d452c90e481cbd89d31330b60edb",
-          "Name": "",
-          "Description": "Boolean",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Selection between a true and false."
     }
   ],
   "Connectors": [
@@ -637,34 +637,34 @@
       "Id": "b0849995d45c42e580b5940455a674aa"
     },
     {
-      "Start": "598a5eafc1684d558cc7ce51298aa4bd",
-      "End": "7b7e2ecc241b4530b827b5391a270139",
-      "Id": "bdfff9c2833d46aeb63e2a2f44872203"
-    },
-    {
       "Start": "fa300e67b2d84d6cb1ad191c08391be4",
       "End": "b7fd157d84064183b702643900db56fe",
       "Id": "26e6aa9cf1fe4a2c8b4db337eb9a6ed4"
     },
     {
-      "Start": "c11a46728c7442809f2485f629a60543",
+      "Start": "db3aa3c3f114482cb279a35a12692bd2",
+      "End": "7b7e2ecc241b4530b827b5391a270139",
+      "Id": "a6869369a97a41879ec3c5e99c862133"
+    },
+    {
+      "Start": "041fead22d8448958f2cffc0fdc5363d",
       "End": "e71d64bc022247e19bb9c8af4c900d98",
-      "Id": "5ddc196806a94081bc10355e83cc4ca8"
+      "Id": "4bf90f33babe4fe19d8728eeac398f16"
     },
     {
-      "Start": "e3d558ee69694d939acece1cd7624d6d",
+      "Start": "73c01b46ec2f4ba3b01835e40a16d9ee",
       "End": "98adc965f8c748538a99eb28ca9b31fa",
-      "Id": "2eda0ea74e7b48729496c61de02ee569"
+      "Id": "f794cd9147d746f69c81198d293e8366"
     },
     {
-      "Start": "af4b2e40a9724ef295fa4159633c6056",
+      "Start": "50af81571a964f84958fa5760545b47c",
       "End": "89e178c95d1b47548ba7487361e3ff91",
-      "Id": "cac9c5a3e02b4f679638b3640c240456"
+      "Id": "59062298d240408aa6416e795ce599ac"
     },
     {
-      "Start": "7ad5d452c90e481cbd89d31330b60edb",
+      "Start": "27c4f21221a447f189a841696514f602",
       "End": "35b90fe57f344d17a8ca79ef8904a769",
-      "Id": "ca383c02826e40c5b721d1c49712ee27"
+      "Id": "06bb65ec96d34bb68d2384f51420a488"
     }
   ],
   "Dependencies": [],
@@ -793,16 +793,6 @@
       },
       {
         "ShowGeometry": true,
-        "Name": "If True, View Template Name",
-        "Id": "f5e1404a83b849528b3c19a09632a930",
-        "IsSetAsInput": true,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 456.26515417593032,
-        "Y": 723.266378788995
-      },
-      {
-        "ShowGeometry": true,
         "Name": "View Template?",
         "Id": "ff261089e3544df7a389c1f67f56b8f8",
         "IsSetAsInput": true,
@@ -813,78 +803,58 @@
       },
       {
         "ShowGeometry": true,
-        "Name": "Top Offset in Feet",
-        "Id": "43f30e8126464de9917494f2711d505a",
+        "Name": "If True, View Template Name",
+        "Id": "a11aa7418d8747bc926b7155b9740d17",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 349.35420155412851,
-        "Y": 784.38517459943
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Bottom Offset in Feet",
-        "Id": "7a145e45608f43c39d97479e38fb64b5",
-        "IsSetAsInput": true,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 349.63589025023657,
-        "Y": 844.32397452770215
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Cut Plane in Feet",
-        "Id": "79e043276130407ab8241ae4951d46dc",
-        "IsSetAsInput": true,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 350.65120501627666,
-        "Y": 900.16628665990061
+        "X": 454.94706633828173,
+        "Y": 723.64937082646622
       },
       {
         "ShowGeometry": true,
         "Name": "Adjust View Range?",
-        "Id": "afe5c9887e0a4fc790daee3dccc922ba",
+        "Id": "a29e91250af94734a305dbe51383bdeb",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 515.3308553465788,
-        "Y": 956.52263599458388
-      }
-    ],
-    "Annotations": [
+        "X": 509.98515544708278,
+        "Y": 778.41877851575123
+      },
       {
-        "Id": "e41544be80f849e09fb60f6afbf54f38",
-        "Title": "User Inputs",
-        "Nodes": [
-          "23ba1e0f8b5944adbcb001759458238f",
-          "7ddb3da5ad244f988096dbd26e1c9f47",
-          "f6bdf5fda1424c61956598eda08e4df1",
-          "be1774ab74b944f4adb86b15489307a9",
-          "97352cc8d06b4f068f180b1f338eba6b",
-          "5a15b60c4cf343368d93f36276752d9c",
-          "354480a08be34563ba5d146c85fb793e",
-          "92dc56a67f46483887b2201d64e3efec",
-          "c2d58ce873234b10ae8930bdec637d24",
-          "f5e1404a83b849528b3c19a09632a930",
-          "ff261089e3544df7a389c1f67f56b8f8",
-          "43f30e8126464de9917494f2711d505a",
-          "7a145e45608f43c39d97479e38fb64b5",
-          "79e043276130407ab8241ae4951d46dc"
-        ],
-        "Left": 58.184327678434954,
-        "Top": 86.461600022392076,
-        "Width": 604.02452756311754,
-        "Height": 881.70468663750853,
-        "FontSize": 36.0,
-        "InitialTop": 139.46160002239208,
-        "InitialHeight": 905.70468663750853,
-        "TextblockHeight": 43.0,
-        "Background": "#FFC1D676"
+        "ShowGeometry": true,
+        "Name": "If True, Top Offset in Feet",
+        "Id": "a9630d120d0c4558ae6d967ce7644662",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 345.13210872296679,
+        "Y": 832.49749969690129
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "If True, Bottom Offset in Feet",
+        "Id": "b1296d8e6b044f44b97de35fee2799c9",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 345.41379741907474,
+        "Y": 888.26199046551119
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "If True, Cut Plane in Feet",
+        "Id": "d26e371e47794eae851574fa15355310",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 345.03767579856174,
+        "Y": 944.10430259771124
       }
     ],
-    "X": -173.0248290963732,
-    "Y": 53.446996916313651,
-    "Zoom": 0.71868179506001628
+    "Annotations": [],
+    "X": 140.84524229071144,
+    "Y": -207.58371344810109,
+    "Zoom": 0.75867477981217635
   }
 }
