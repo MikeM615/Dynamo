@@ -1,0 +1,455 @@
+{
+  "Uuid": "5d596541-2b59-4718-9348-2080655f0ff0",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Family - Add Shared Parameters",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "a21bb53d6eb844acb46198984168799c",
+      "Name": "File Path to Shared Parameter File",
+      "Type": "string",
+      "Value": "S:\\VDC\\11-WIP - Family\\WIP - VDC Shared Parameters\\HEC_Shared Parameters.txt",
+      "Description": "Allows you to select a file on the system to get its filename"
+    },
+    {
+      "Id": "ca553a02c3de48faa90fb60d1f271a23",
+      "Name": "Instance Parameter Name/s",
+      "Type": "string",
+      "Value": "HEC_Work Package Number, HEC_Trade Code, HEC_Area",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+      "Name": "Type Parameter Name/s",
+      "Type": "string",
+      "Value": "HEC_Host Element, HEC_Sub Element",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "480cb6d80f054fa89b3b04d84797d8f3",
+      "Name": "Group Name",
+      "Type": "string",
+      "Value": "WBS",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.IO.FileSystem.ReadText@var",
+      "Id": "d7876bbbbfca4eca9ecd3c3c11ca42c7",
+      "Inputs": [
+        {
+          "Id": "78797ba019b44e25afbdfed0dd29171f",
+          "Name": "file",
+          "Description": "var",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3a4225587c61488cb6d6993d760af0b2",
+          "Name": "str",
+          "Description": "Contents of the text file.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Reads a text file and returns the contents as a string.\n\nFileSystem.ReadText (file: var): string"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "S:\\VDC\\11-WIP - Family\\WIP - VDC Shared Parameters\\HEC_Shared Parameters.txt",
+      "InputValue": "S:\\VDC\\11-WIP - Family\\WIP - VDC Shared Parameters\\HEC_Shared Parameters.txt",
+      "NodeType": "ExtensionNode",
+      "Id": "a21bb53d6eb844acb46198984168799c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b99ef9cffee84423b9daf367aa892822",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a file on the system to get its filename"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "7e8d8c922a2a47678bdc93bd7f461071",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9c63665a1a2e47989b82c7b65acf3532",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import*\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n#Inputs\r\nspfile = IN[0] \r\ngroup_name = IN[1]\r\nparam_name = IN[2] \r\nparam_name2 = IN[3]\r\nsubHost = IN[4]\r\ndelim = IN[5]\r\n\r\n#Lists\r\nresult = []\r\n\r\n#ExternalDefinition\r\ndef defFile(file, group, param) :\r\n\tfile = app.OpenSharedParameterFile()\r\n\tdefGroup = file.Groups.get_Item(group)\r\n\treturn defGroup.Definitions.get_Item(param)\r\n\t\r\n#Start Functions\t\r\npName = param_name.split(delim)\r\npName2 = param_name2.split(delim)\t\r\n\r\n\r\nfor pn in pName:\r\n\ttry:\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\teDef = defFile(spfile, group_name, pn)\r\n\t\tparam = doc.FamilyManager.AddParameter(eDef, BuiltInParameterGroup.PG_IDENTITY_DATA, False)\r\n\t\tresult.append('Success')\r\n\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\tif subHost == True:\r\n\t\t\tparam.Definition.Name\r\n\t\t\tif param.Definition.Name == \"HEC_Host Element\":\r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\tdoc.FamilyManager.SetFormula(param, str(\"1=1\"))\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\tresult.append(\"Host True\")\r\n\t\t\telif param.Definition.Name == \"HEC_Sub Element\":\r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\tdoc.FamilyManager.SetFormula(param, str(\"1=0\"))\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\tresult.append(\"Sub False\")\r\n\t\telse:\r\n\t\t\tif param.Definition.Name == \"HEC_Host Element\":\r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\tdoc.FamilyManager.SetFormula(param, str(\"1=0\"))\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\tresult.append(\"Host False\")\r\n\t\t\telif param.Definition.Name == \"HEC_Sub Element\":\r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\tdoc.FamilyManager.SetFormula(param, str(\"1=1\"))\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\tresult.append(\"Sub True\")\r\n\r\n\texcept:\r\n\t\tresult.append('Failed')\r\n\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\t\r\n\t\t\r\n\t\t\r\nfor pN in pName2:\r\n\ttry :\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\teDef2 = defFile(spfile, group_name, pN)\r\n\t\tdoc.FamilyManager.AddParameter(eDef2, BuiltInParameterGroup.PG_DATA, True)\r\n\t\tresult.append('Success')\r\n\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\texcept :\r\n\t\tresult.append('Failed')\r\n\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\r\n\r\n\t\t\r\n\t\t\r\n\t\t\r\nOUT = result",
+      "VariableInputPorts": true,
+      "Id": "567e315bfee545e1ae4d31563484edf8",
+      "Inputs": [
+        {
+          "Id": "98b1f52bb5374b2fb05e732d2c282bbf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5865c8434c904e3a960a2444e5262dd4",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "879bdf5a2cfb40218a59bc6f506cc129",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a2cc51e282d04cd9a1b95ce8875e71b7",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "90ffb31067f1439b96cbb9bb8a55a0fc",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "769bb96aed2b43ec9abe34238fde47a5",
+          "Name": "IN[5]",
+          "Description": "Input #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b047d63c28cf4c5cbee5ca971ae3c74a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "HEC_Work Package Number, HEC_Trade Code, HEC_Area",
+      "Id": "ca553a02c3de48faa90fb60d1f271a23",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "73576bd210504613a977ec177d956733",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": ", ",
+      "Id": "07c1365319de4bb8af667e8159ae2e7c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "82f0135f2a2a4b35ad7b7a5e378628ac",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "HEC_Host Element, HEC_Sub Element",
+      "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e6456fb77d9d4559a3d86538184393d4",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "WBS",
+      "Id": "480cb6d80f054fa89b3b04d84797d8f3",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "0f3c510921514eadab0e1b5b09c0d31c",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "3a4225587c61488cb6d6993d760af0b2",
+      "End": "98b1f52bb5374b2fb05e732d2c282bbf",
+      "Id": "dd1d2b2cf963423aa130927bf852df1e"
+    },
+    {
+      "Start": "b99ef9cffee84423b9daf367aa892822",
+      "End": "78797ba019b44e25afbdfed0dd29171f",
+      "Id": "a6c1a6f29250459f8f69b7e4887f9127"
+    },
+    {
+      "Start": "9c63665a1a2e47989b82c7b65acf3532",
+      "End": "90ffb31067f1439b96cbb9bb8a55a0fc",
+      "Id": "105c588e8e0b4f45988bfe6950a5b1fd"
+    },
+    {
+      "Start": "73576bd210504613a977ec177d956733",
+      "End": "a2cc51e282d04cd9a1b95ce8875e71b7",
+      "Id": "abfdb8707f634ce8975d447ec2ef3716"
+    },
+    {
+      "Start": "82f0135f2a2a4b35ad7b7a5e378628ac",
+      "End": "769bb96aed2b43ec9abe34238fde47a5",
+      "Id": "0c751ad1503c4255ab0ff551533fe2f3"
+    },
+    {
+      "Start": "e6456fb77d9d4559a3d86538184393d4",
+      "End": "879bdf5a2cfb40218a59bc6f506cc129",
+      "Id": "044ae0272b384b0db353f2fdd9d7fb69"
+    },
+    {
+      "Start": "0f3c510921514eadab0e1b5b09c0d31c",
+      "End": "5865c8434c904e3a960a2444e5262dd4",
+      "Id": "1e0c70dc338747178c10cf584b3fe508"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.1.11775",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "FileSystem.ReadText",
+        "Id": "d7876bbbbfca4eca9ecd3c3c11ca42c7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -59.219234542099,
+        "Y": -16.363380021197827
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "File Path to Shared Parameter File",
+        "Id": "a21bb53d6eb844acb46198984168799c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -548.33794742020791,
+        "Y": -16.130554050828096
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Host = True, Sub = False",
+        "Id": "7e8d8c922a2a47678bdc93bd7f461071",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -65.784485841393831,
+        "Y": 392.90595036804518
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Add Shared Parameter to Family",
+        "Id": "567e315bfee545e1ae4d31563484edf8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 195.99897391916073,
+        "Y": 133.50441060260027
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Instance Parameter Name/s",
+        "Id": "ca553a02c3de48faa90fb60d1f271a23",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -103.8040905595908,
+        "Y": 309.42382713498279
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Delimeter(include space if exists)",
+        "Id": "07c1365319de4bb8af667e8159ae2e7c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -124.28981337420817,
+        "Y": 451.53341927174029
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Type Parameter Name/s",
+        "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -99.121260216594578,
+        "Y": 128.80037104798657
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Group Name",
+        "Id": "480cb6d80f054fa89b3b04d84797d8f3",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -30.983218123823235,
+        "Y": 73.143527946668826
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "29f0d66c53034bcfbb3337d939e1ee77",
+        "Title": "Type Parameters and User Inputs",
+        "Nodes": [
+          "d7876bbbbfca4eca9ecd3c3c11ca42c7",
+          "a21bb53d6eb844acb46198984168799c",
+          "832ab5b2116f4c65a2f4bac0836baf62",
+          "7e8d8c922a2a47678bdc93bd7f461071",
+          "07c1365319de4bb8af667e8159ae2e7c",
+          "ca553a02c3de48faa90fb60d1f271a23"
+        ],
+        "Left": -558.33794742020791,
+        "Top": -69.69671335453117,
+        "Width": 662.45204621144228,
+        "Height": 588.89679929293811,
+        "FontSize": 36.0,
+        "InitialTop": -16.363380021197827,
+        "InitialHeight": 612.89679929293811,
+        "TextblockHeight": 43.333333333333336,
+        "Background": "#FF48B9FF"
+      },
+      {
+        "Id": "6747118d89a24b91a138068385fc671c",
+        "Title": "Instance Parameters",
+        "Nodes": [
+          "ca553a02c3de48faa90fb60d1f271a23"
+        ],
+        "Left": -113.8040905595908,
+        "Top": 212.7571604683161,
+        "Width": 210.66666666666666,
+        "Height": 179.0,
+        "FontSize": 36.0,
+        "InitialTop": 309.42382713498279,
+        "InitialHeight": 145.0,
+        "TextblockHeight": 86.666666666666671,
+        "Background": "#FFE8F7AD"
+      }
+    ],
+    "X": 789.61260239480919,
+    "Y": 213.06792923153284,
+    "Zoom": 0.99654831049907644
+  }
+}
