@@ -1,0 +1,129 @@
+{
+  "Uuid": "3ff247ba-6e19-4713-9f0a-2c781cdbc211",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Conduit Run_Copy Parameters from Element and paste into entire run",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [
+    {
+      "Id": "cce2a885138e46f6ba057e338f8728bd",
+      "Name": "Watch",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\nimport clr\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nfrom System.Collections.Generic import List\r\n#Define Lists\r\npVStr = []\r\npVInt = []\r\npVEId = []\r\npVDouble = []\r\npVAVS = []\r\nresult = []\r\n\r\n#Filtered Element Collectors\r\nconduitFEC = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Conduit).WhereElementIsNotElementType().ToElements()\r\nconduitFittingFEC = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_ConduitFitting).WhereElementIsNotElementType().ToElements()\t\r\n#Define Selection Method\r\nsel = uidoc.Selection\r\not = Selection.ObjectType.Element\r\nelemParamRef = sel.PickObjects(ot, \"Select Elements to Copy Parameter Values From\")\r\n#For each selected element:\r\nfor ePR in elemParamRef:\r\n\telemPR = doc.GetElement(ePR.ElementId)\r\n\ttry:\r\n\t\telemParamMap = elemPR.ParametersMap\r\n\t\tfor ePS in elemParamMap:\r\n\t\t\tif not ePS.IsReadOnly:\r\n\t\t\t\tif ePS.HasValue == True:\r\n\t\t\t\t\tif ePS.CanBeAssociatedWithGlobalParameters() == True:\r\n\t\t\t\t\t\tif ePS.Definition.Visible == True:\r\n\t\t\t\t\t\t\tif ePS.StorageType == StorageType.String:\r\n\t\t\t\t\t\t\t\tif ePS.AsString() != None:\r\n\t\t\t\t\t\t\t\t\tif ePS.AsString() != \"\":\r\n\t\t\t\t\t\t\t\t\t\telemParamValueAS = ePS.AsString()\r\n\t\t\t\t\t\t\t\t\t\tpVStr.Add([ePS.Definition.Name, elemParamValueAS])\r\n\t\t\t\t\t\t\t\t\t\t\r\n\t\t\t\t\t\t\telif ePS.StorageType == StorageType.Integer:\r\n\t\t\t\t\t\t\t\telemParamValueAI = ePS.AsInteger()\r\n\t\t\t\t\t\t\t\tpVInt.Add([ePS.Definition.Name, elemParamValueAI])\r\n\t\t\t     \t\t\t\r\n\t\t\t\t\t\t\telif ePS.StorageType == StorageType.ElementId:\r\n\t\t\t\t\t\t\t\telemParamValueAEId = ePS.AsElementId()\r\n\t\t\t\t\t\t\t\tif str(elemParamValueAEId) != \"-1\":\r\n\t\t\t\t\t\t\t\t\tif ePS.Definition.Name != \"Level\":\r\n\t\t\t\t\t\t\t\t\t\tpVEId.Add([ePS.Definition.Name, elemParamValueAEId])\r\n\t\t\t          \r\n\t\t\t\t\t\t\telif ePS.StorageType == StorageType.Double:\r\n\t\t\t\t\t\t\t\telemParamValueAD = ePS.AsDouble()\r\n\t\t\t\t\t\t\t\tpVDouble.Add([ePS.Definition.Name, elemParamValueAD])\r\n\t\t\t                    \r\n\t\t\t\t\t\t\telse:\r\n\t\t\t\t\t\t\t\telemParamValueAVS = ePS.AsValueString()\r\n\t\t\t\t\t\t\t\tpVAVS.Add([ePS.Definition.Name, elemParamValueAVS])\r\n\texcept:\r\n\t\tresult.Add(\"Get Parameter Values Failed\")\r\n\trunId = []\r\n\ttry:\r\n\t\tconnectors = elemPR.MEPModel.ConnectorManager.Connectors\r\n\t\tfor conn in connectors:\r\n\t\t\tfor c in conn.AllRefs:\r\n\t\t\t\tconduitRunId = c.Owner.RunId \r\n\texcept:\r\n\t\ttry:\r\n\t\t\tconduitRunId = elemPR.RunId\r\n\t\t\t\r\n\t\texcept:\r\n\t\t\tresult.Add(\"Get Connected Elements Failed\")\t\r\n\t\t\tcontinue\r\n\t\t\r\n\ttest = []\r\n\tfor cFEC in conduitFEC:\r\n\t\ttry:\r\n\t\t\tif cFEC.RunId == conduitRunId:\r\n\t\t\t\ttest.append(cFEC)\r\n\t\texcept:\r\n\t\t\tresult.Add(\"Get Conduits with Matching RunId Failed\")\t\r\n\r\n\tfor cFFEC in conduitFittingFEC:\r\n\t\ttry:\t\r\n\t\t\tconnectors1 = cFFEC.MEPModel.ConnectorManager.Connectors\r\n\t\t\tfor conn in connectors1:\r\n\t\t\t\tfor c in conn.AllRefs:\r\n\t\t\t\t\tconduitRunId1 = c.Owner.RunId \r\n\t\t\t\t\tif conduitRunId1 == conduitRunId:\r\n\t\t\t\t\t\ttest.append(cFFEC)\r\n\t\texcept:\r\n\t\t\tresult.Add(\"Get Conduit Fittings with Matching RunId Failed\")\r\n\r\n\tfor t in test:\r\n\t\ttry:\r\n\t\t\ttry:\r\n\t\t\t\tif pVStr != None:\r\n\t\t\t\t\tfor pVS in pVStr:\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tt.LookupParameter(pVS[0]).Set(pVS[1])\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\tresult.Add(\"String Parameter Success\")\r\n\t\t\texcept:\r\n\t\t\t\tresult.Add(\"Set Parameter Failed\")\r\n\t\t\ttry:\t\t\t\r\n\t\t\t\tif pVInt != None:\r\n\t\t\t\t\tfor pVI in pVInt:\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tt.LookupParameter(pVI[0]).Set(pVI[1])\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\tresult.Add(\"Integer Parameter Success\")\r\n\t\t\texcept:\r\n\t\t\t\tresult.Add(\"Set Parameter Failed\")\r\n\t\t\ttry:\t\t\t\r\n\t\t\t\tif pVDouble != None:\r\n\t\t\t\t\tfor pVD in pVDouble:\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tt.LookupParameter(pVD[0]).Set(pVD[1])\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\tresult.Add(\"Double Parameter Success\")\r\n\t\t\texcept:\r\n\t\t\t\tresult.Add(\"Set Parameter Failed\")\r\n\t\t\ttry:\t\r\n\t\t\t\tif pVEId != None:\r\n\t\t\t\t\tfor pveid in pVEId:\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tt.LookupParameter(pveid[0]).Set(pveid[1])\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\tresult.Add(\"ElementId Parameter Success\")\r\n\t\t\texcept:\r\n\t\t\t\tresult.Add(\"Set Parameter Failed\")\t\t\t\r\n\t\t\ttry:\t\t\t\r\n\t\t\t\tif pVAVS != None:\r\n\t\t\t\t\tfor pvavs in pVAVS:\r\n\t\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\t\tt.LookupParameter(pvavs[0]).Set(pvavs[1])\r\n\t\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\t\tresult.Add(\"Value String Parameter Success\")\r\n\t\t\texcept:\r\n\t\t\t\tresult.Add(\"Set Parameter Failed\")\t\t\t\r\n\t\r\n\t\texcept:\r\n\t\t\tresult.Add(\"Set Parameter Failed\")\r\n\t\t\r\n\t\t\r\n\t\t\r\n\t\t\t\r\n\t\t\r\n\t\r\n\t\r\ntry:\r\n\tOUT = result, test\r\nexcept:\r\n\tOUT = result\r\n\t",
+      "VariableInputPorts": true,
+      "Id": "9286293e8efd422b949ff305a3e5f7d6",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a7c48e6f316144d9902a99da4340f127",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "cce2a885138e46f6ba057e338f8728bd",
+      "Inputs": [
+        {
+          "Id": "846a6e8abd804bbeb203ad25069977ce",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9f23ddb740604b0a9cca4033b110852f",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "a7c48e6f316144d9902a99da4340f127",
+      "End": "846a6e8abd804bbeb203ad25069977ce",
+      "Id": "30bbe8f7cc624b4eb49e42fbe4909e5b"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.1.11775",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Fence over Conduits/Conduit Fittings to copy parameter value from:",
+        "Id": "9286293e8efd422b949ff305a3e5f7d6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 145.242220763082,
+        "Y": -178.50229617949691
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "cce2a885138e46f6ba057e338f8728bd",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 617.39711170015642,
+        "Y": -177.67807172238417
+      }
+    ],
+    "Annotations": [],
+    "X": 229.15067769847218,
+    "Y": 733.308781244717,
+    "Zoom": 1.5005870880319454
+  }
+}
