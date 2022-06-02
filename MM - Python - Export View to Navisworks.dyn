@@ -1,0 +1,233 @@
+{
+  "Uuid": "80fad942-70e2-41f7-b27b-99d98e8ddcba",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Export View to Navisworks",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "a6728f6669564bef8cf5a4b0f94547eb",
+      "Name": "Name of 3D Views to be Exported to Navis, with a delimiter such as \", \" between them",
+      "Type": "string",
+      "Value": "3D Ortho, {3D}, Another 3D",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "5c8373e9678846cb99228550b7012939",
+      "Name": "Delimeter (Include space if there)",
+      "Type": "string",
+      "Value": ", ",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "e6d878c213fe4a65a55c2189e4a8128a",
+      "Name": "Directory Path",
+      "Type": "string",
+      "Value": "C:\\Users\\MMeyers\\Downloads",
+      "Description": "Allows you to select a directory on the system to get its path"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport System\r\nfrom System import Array\r\nfrom System.Collections.Generic import *\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager \r\nfrom RevitServices.Transactions import TransactionManager \r\nclr.AddReference(\"RevitAPI\")\r\nclr.AddReference(\"RevitAPIUI\")\r\nimport Autodesk \r\nfrom Autodesk.Revit.DB import *\r\nimport traceback\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nresult = []\r\n\r\nviewNames = IN[0]\r\ndelimiter = IN[1]\r\nexportFolderPath = IN[2]\r\nt = []\r\nvNSplit = viewNames.split(delimiter)\r\nv3DFEC = FilteredElementCollector(doc).OfClass(View3D).ToElements()\r\nfor vNS, v3D in zip(vNSplit, v3DFEC):\r\n\tif v3D.Name.ToString() == vNS:\r\n\t\tt.append(v3D)\r\n\t\topt = NavisworksExportOptions()\r\n\t\topt.ExportScope = NavisworksExportScope.View;\r\n\t\topt.ViewId = v3D.Id;\r\n\r\n\t\tdoc.Export(exportFolderPath, v3D.Name.ToString() + \".nwc\", opt)\r\n\t\t\r\n\r\n\r\ntry:\r\n\tOUT =  result, t\r\n\t\r\nexcept:\r\n\tOUT = result",
+      "VariableInputPorts": true,
+      "Id": "bd8a62a3cc594ac19f267736bf958ea0",
+      "Inputs": [
+        {
+          "Id": "1370a92903314d60a6dbe7edf45614fa",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ee145e402dbd4bcb8b51250ad43683ef",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7333f653dfc84ff3a5bdca5249b6956e",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "880f238854764015ac1ce0a2e564ae58",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "3D Ortho, {3D}, Another 3D",
+      "Id": "a6728f6669564bef8cf5a4b0f94547eb",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a3ea25235eda4acdbb7f965dc4d6ecec",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": ", ",
+      "Id": "5c8373e9678846cb99228550b7012939",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a9aaa3b696e6452c9fb2a941b9adbad4",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Directory, CoreNodeModels",
+      "HintPath": "C:\\Users\\MMeyers\\Downloads",
+      "InputValue": "C:\\Users\\MMeyers\\Downloads",
+      "NodeType": "ExtensionNode",
+      "Id": "e6d878c213fe4a65a55c2189e4a8128a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fc913f6ab06242b797d486b6652f1d4b",
+          "Name": "",
+          "Description": "Directory",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows you to select a directory on the system to get its path"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "a3ea25235eda4acdbb7f965dc4d6ecec",
+      "End": "1370a92903314d60a6dbe7edf45614fa",
+      "Id": "9f80211ec1484f0bbe0bb8fc3c91fb6b"
+    },
+    {
+      "Start": "a9aaa3b696e6452c9fb2a941b9adbad4",
+      "End": "ee145e402dbd4bcb8b51250ad43683ef",
+      "Id": "1631e3fe5c954a04ab5407c155e9f96d"
+    },
+    {
+      "Start": "fc913f6ab06242b797d486b6652f1d4b",
+      "End": "7333f653dfc84ff3a5bdca5249b6956e",
+      "Id": "af624026456c4047be02fa1315c1f097"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.1.11775",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -3.7919373846866176,
+      "EyeY": 11.343635987368248,
+      "EyeZ": 30.55416033612218,
+      "LookX": 7.2649828097267815,
+      "LookY": -7.8703980438706864,
+      "LookZ": -35.114083580346147,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Export View/Multiple Views",
+        "Id": "bd8a62a3cc594ac19f267736bf958ea0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -875.16037188158907,
+        "Y": -256.34587646857591
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Name of 3D Views to be Exported to Navis, with a delimiter such as \", \" between them",
+        "Id": "a6728f6669564bef8cf5a4b0f94547eb",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1447.1576475585352,
+        "Y": -258.67075269900329
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Delimeter (Include space if there)",
+        "Id": "5c8373e9678846cb99228550b7012939",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1140.5633919366669,
+        "Y": -201.97869170571698
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Directory Path",
+        "Id": "e6d878c213fe4a65a55c2189e4a8128a",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1162.9082664913258,
+        "Y": -135.07543394189918
+      }
+    ],
+    "Annotations": [],
+    "X": 2294.5642176868764,
+    "Y": 606.857250982031,
+    "Zoom": 1.3486528859368927
+  }
+}
