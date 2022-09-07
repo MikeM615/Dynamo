@@ -11,21 +11,21 @@
       "Id": "c97c8e77c54d4574a773dc63def67f35",
       "Name": "Parameter Name",
       "Type": "string",
-      "Value": "EX_Task_ID",
+      "Value": "EX_Layout_Mark",
       "Description": "Creates a string."
     },
     {
       "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
       "Name": "SearchValue",
       "Type": "string",
-      "Value": "Bobs your Uncle",
+      "Value": "Copy to 6",
       "Description": "Creates a string."
     },
     {
       "Id": "ad8f213bc8a540798ba49ee63166583e",
       "Name": "ReplaceWith",
       "Type": "string",
-      "Value": "Teds",
+      "Value": "Copied from 5",
       "Description": "Creates a string."
     },
     {
@@ -49,7 +49,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "EX_Task_ID",
+      "InputValue": "EX_Layout_Mark",
       "Id": "c97c8e77c54d4574a773dc63def67f35",
       "Inputs": [],
       "Outputs": [
@@ -69,7 +69,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "Bobs your Uncle",
+      "InputValue": "Copy to 6",
       "Id": "0a4d9a1557f8465bac55a88b4bf2c40a",
       "Inputs": [],
       "Outputs": [
@@ -89,7 +89,7 @@
     {
       "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
       "NodeType": "StringInputNode",
-      "InputValue": "Teds",
+      "InputValue": "Copied from 5",
       "Id": "ad8f213bc8a540798ba49ee63166583e",
       "Inputs": [],
       "Outputs": [
@@ -148,7 +148,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nfrom System.Collections.Generic import List\r\ncontainString = IN[0]\r\nparametersearch = IN[1]\r\nreplaceString = IN[2]\r\ncase = IN[3]\r\n\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\n\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == parametersearch:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\n\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == parametersearch:\r\n\t\t\tbiplist.append(bip)\r\n\r\nsharedparamrule = SharedParameterApplicableRule(parametersearch)\r\n\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == parametersearch:\r\n\t\t\tparameter = param\r\n\t\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\r\n\t\t\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\n\t\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\r\n\tcollector2 = FilteredElementCollector(doc)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\n\r\n\r\n\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\n\tfor e in elements:\r\n\t\tparamVal = e.LookupParameter(parametersearch).AsString()\r\n\t\tparamValReplaced = paramVal.replace(containString, replaceString)\r\n\t\ttry:\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tsetParamVal = e.LookupParameter(parametersearch).Set(paramValReplaced)\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\texcept:\r\n\t\t\tOUT = \"Failed\"\r\n\t\r\nOUT = \"Success\"\r\n\t",
+      "Code": "#Portion of this script is taken from MEPover to find elements that contain section of a string in their parameter value\r\n\r\nimport clr\r\nimport System\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\nfrom System.Collections.Generic import List\r\ncontainString = IN[0]\r\nparametersearch = IN[1]\r\nreplaceString = IN[2]\r\ncase = IN[3]\r\n\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\n\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == parametersearch:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\n\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == parametersearch:\r\n\t\t\tbiplist.append(bip)\r\n\r\nsharedparamrule = SharedParameterApplicableRule(parametersearch)\r\n\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\t\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == parametersearch:\r\n\t\t\tparameter = param\r\n\t\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\r\n\t\t\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\r\n\t\tcollector2 = FilteredElementCollector(doc)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\n\t\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, containString, case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\r\n\tcollector2 = FilteredElementCollector(doc)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\n\r\n\r\n\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\n\tfor e in elements:\r\n\t\tparamVal = e.LookupParameter(parametersearch).AsString()\r\n\t\tparamValReplaced = paramVal.replace(containString, replaceString)\r\n\t\ttry:\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tsetParamVal = e.LookupParameter(parametersearch).Set(paramValReplaced)\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\texcept:\r\n\t\t\tOUT = \"Failed\"\r\n\t\r\nOUT = \"Success\"\r\n\t",
       "VariableInputPorts": true,
       "Id": "7ed13ef467c040e6bf7c8d365ba1d8cc",
       "Inputs": [
@@ -342,8 +342,8 @@
       }
     ],
     "Annotations": [],
-    "X": -1019.128177189255,
-    "Y": -571.918220610246,
-    "Zoom": 1.188548390512185
+    "X": -1912.3709134146582,
+    "Y": -1341.3135765464772,
+    "Zoom": 2.0167607813391379
   }
 }
