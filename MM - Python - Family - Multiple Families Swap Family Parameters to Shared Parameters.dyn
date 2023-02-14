@@ -1,0 +1,174 @@
+{
+  "Uuid": "5d596541-2b59-4718-9348-2080655f0ff0",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Family - Multiple Families Swap Family Parameters to Shared Parameters",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "f7b36027124e4a11a8be69bee8fcef52",
+      "Name": "Copy/Paste Family Directory, Needs \\\\ not \\ in the path",
+      "Type": "string",
+      "Value": "C:\\\\Users\\\\MMeyers\\\\Downloads",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "C:\\\\Users\\\\MMeyers\\\\Downloads",
+      "Id": "f7b36027124e4a11a8be69bee8fcef52",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c0c02094f54340219fc3580cd687fa51",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nimport os\nimport sys\nimport System\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\nimport Autodesk.DesignScript.Geometry as DS\n\nclr.AddReference('RevitAPI')\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport Autodesk.Revit.DB as DB\n\nclr.AddReference('RevitServices')\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\ndoc = DocumentManager.Instance.CurrentDBDocument\nuiapp = DocumentManager.Instance.CurrentUIApplication\napp = uiapp.Application\n\n\npf_path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFilesX86)\nsys.path.append(pf_path + '\\\\IronPython 2.7\\\\Lib')\n\nfampaths = IN[1]\n\n\n#Get Active Documents Shared Param File\ndef defFile(shareFile, group, param) :\n\tshareFile = app.OpenSharedParameterFile()\n\tdefGroup = shareFile.Groups.get_Item(group)\n\treturn defGroup.Definitions.get_Item(param)\n\t\n#Start Functions\t\n\nendsWith = str(\".rfa\")\n\ni = 0\nresult = []\ntry:\n\tfor file in os.listdir(fampaths):\n\t\tif file.endswith(endsWith):\n\t\t\tdoc = DocumentManager.Instance.CurrentDBDocument\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\n\t\t\tfamdoc = app.OpenDocumentFile(fampaths + \"\\\\\" + file)\n\t\t\ttry :\n\t\t\t\tallParams = famdoc.FamilyManager.GetParameters()\n\t\t\t\tfor aP in (aP for aP in allParams if aP.Definition.Name.lower() == \"height\"): \n\t\t\t\t\tboo = aP.IsInstance\n\t\t\t\t\teDef = defFile(file, \"Dimensions\", \"HEC_Height\")\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(famdoc)\n\t\t\t\t\tfamdoc.FamilyManager.ReplaceParameter(aP, eDef, BuiltInParameterGroup.PG_GEOMETRY, boo)\n\t\t\t\t\tTransactionManager.Instance.ForceCloseTransaction()\n\t\t\t\tfor aP in (aP for aP in allParams if aP.Definition.Name.lower() == \"length\"): \n\t\t\t\t\tboo = aP.IsInstance\n\t\t\t\t\teDef = defFile(file, \"Dimensions\", \"HEC_Length\")\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(famdoc)\n\t\t\t\t\tfamdoc.FamilyManager.ReplaceParameter(aP, eDef, BuiltInParameterGroup.PG_GEOMETRY, boo )\n\t\t\t\t\tTransactionManager.Instance.ForceCloseTransaction()\n\t\t\t\tfor aP in (aP for aP in allParams if aP.Definition.Name.lower() == \"width\"): \n\t\t\t\t\tboo = aP.IsInstance\n\t\t\t\t\teDef = defFile(file, \"Dimensions\", \"HEC_Width\")\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(famdoc)\n\t\t\t\t\tfamdoc.FamilyManager.ReplaceParameter(aP, eDef, BuiltInParameterGroup.PG_GEOMETRY, boo )\n\t\t\t\t\tTransactionManager.Instance.ForceCloseTransaction()\n\t\t\t\tfor aP in (aP for aP in allParams if aP.Definition.Name.lower() == \"depth\"): \n\t\t\t\t\tboo = aP.IsInstance\n\t\t\t\t\teDef = defFile(file, \"Dimensions\", \"HEC_Depth\")\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(famdoc)\n\t\t\t\t\tfamdoc.FamilyManager.ReplaceParameter(aP, eDef, BuiltInParameterGroup.PG_GEOMETRY, boo)\n\t\t\t\t\tTransactionManager.Instance.ForceCloseTransaction()\n\n\t\t\texcept :\n\t\t\t\tresult.append(\"Error Replacing Parameters\")\n\t\t\t\tTransactionManager.Instance.ForceCloseTransaction()\n\t\t\t      \n\t\n\t\t\ti += 1\n\t\t\tfamdoc.Close(True)\n\t\t\tfamdoc.Dispose()\t\n\t            \nexcept:\n\n\tresult.append(\"Failed\")\n\tTransactionManager.Instance.ForceCloseTransaction()\n\t\n\t\t\t\nOUT = result",
+      "VariableInputPorts": true,
+      "Id": "c63ab9318df145cd8d1f515cafd59206",
+      "Inputs": [
+        {
+          "Id": "88d8deb1d5f94f939983592e08a2bc5f",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d70bc96d7df046988a8224679c8ac8b8",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5c7127fc93724551aede1065eeb0613e",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "e2463ae4c21f4d7992f03542dfd01683",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b7fa4339b6b04a52b5a21401ba50330e",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c0c02094f54340219fc3580cd687fa51",
+      "End": "d70bc96d7df046988a8224679c8ac8b8",
+      "Id": "5f246034d7fb49ae90431025854dd970"
+    },
+    {
+      "Start": "b7fa4339b6b04a52b5a21401ba50330e",
+      "End": "88d8deb1d5f94f939983592e08a2bc5f",
+      "Id": "471266f2f4b9462e8228ea82b5bf569e"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.2.15696",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Copy/Paste Family Directory, Needs \\\\ not \\ in the path",
+        "Id": "f7b36027124e4a11a8be69bee8fcef52",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -568.53788894082754,
+        "Y": -759.80921210858628
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Add Parameters to File Folder full of families",
+        "Id": "c63ab9318df145cd8d1f515cafd59206",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -179.58934600131238,
+        "Y": -809.35058733883648
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Refresh",
+        "Id": "e2463ae4c21f4d7992f03542dfd01683",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -348.20844169214917,
+        "Y": -821.65756990824832
+      }
+    ],
+    "Annotations": [],
+    "X": 677.2130097631474,
+    "Y": 979.92107307000538,
+    "Zoom": 0.89130647995807555
+  }
+}

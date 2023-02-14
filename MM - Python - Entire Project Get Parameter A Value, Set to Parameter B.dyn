@@ -1,0 +1,166 @@
+{
+  "Uuid": "3ff247ba-6e19-4713-9f0a-2c781cdbc211",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Entire Project Get Parameter A Value, Set to Parameter B",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nfrom System.Collections.Generic import List\r\n#Define Lists\r\nparameterA = IN[0]\r\nparameterB = IN[1]\r\nFECActiveView = FilteredElementCollector(doc).WhereElementIsNotElementType().OfCategory(BuiltInCategory.OST_Views).FirstElement()\r\nParameterID = FECActiveView.LookupParameter(parameterA).Id\r\n\r\nElementParameterHasValueFilter = ParameterFilterRuleFactory.CreateHasValueParameterRule(ParameterID)\r\n\r\n#Filtered Element Collectors\r\nFEC = FilteredElementCollector(doc).WhereElementIsNotElementType().WherePasses(ElementParameterFilter(ElementParameterHasValueFilter)).ToElements()\r\n\r\nparameterAVal = None\r\nfor element in FEC:\r\n\tif element.LookupParameter(parameterA).HasValue and element.LookupParameter(parameterA).AsString() != \"\":\r\n\t\tparameterAVal = element.LookupParameter(parameterA).AsString()\r\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\telement.LookupParameter(parameterB).Set(parameterAVal)\r\n\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\r\n\r\n\r\n\r\n\r\n\t\t\t\r\n\t\t\r\n\t\r\n\t\r\n\r\nOUT = parameterAVal, parameterA, parameterB\r\n\t",
+      "VariableInputPorts": true,
+      "Id": "9286293e8efd422b949ff305a3e5f7d6",
+      "Inputs": [
+        {
+          "Id": "45592edd6bea40fa957f3566a378637b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0a1bbb95240146cb9e5afeb0d9b62db8",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a7c48e6f316144d9902a99da4340f127",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "HEC_Subcategory (Secondary)",
+      "Id": "344b305c40684a7f903b6aca1bb8499c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c775e27dc042483090bfa7bb0988911d",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "HEC_Subcategory",
+      "Id": "e6d62371ffd044228a9da7ea4e9bf6f4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "da37a89b391c48dc82bf0adba9e89b33",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "c775e27dc042483090bfa7bb0988911d",
+      "End": "45592edd6bea40fa957f3566a378637b",
+      "Id": "b1210940b05546e8aa889af8a94e7b1b"
+    },
+    {
+      "Start": "da37a89b391c48dc82bf0adba9e89b33",
+      "End": "0a1bbb95240146cb9e5afeb0d9b62db8",
+      "Id": "827d12d83df7457daa9fb039dcf2c247"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.2.15696",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Get Project Parameter value, set to new Project Parameter",
+        "Id": "9286293e8efd422b949ff305a3e5f7d6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 244.05220807246911,
+        "Y": -125.61746988361421
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "ParameterName A",
+        "Id": "344b305c40684a7f903b6aca1bb8499c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 18.459739958066677,
+        "Y": -134.75065432057909
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "ParameterName B",
+        "Id": "e6d62371ffd044228a9da7ea4e9bf6f4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 74.92353875800768,
+        "Y": -77.222849446222881
+      }
+    ],
+    "Annotations": [],
+    "X": 324.06515924070425,
+    "Y": 647.82161424933463,
+    "Zoom": 1.8655020663158663
+  }
+}

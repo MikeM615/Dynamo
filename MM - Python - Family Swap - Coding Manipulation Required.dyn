@@ -1,0 +1,272 @@
+{
+  "Uuid": "ed8c718b-4a71-40a3-a19c-02562708a8e8",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Family Swap - Coding Manipulation Required",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": 475,
+      "SelectedString": "HEC_Wall_Pen:WALL_PEN_STANDARD",
+      "NodeType": "ExtensionNode",
+      "Id": "a01f271d97164481891a2cacf966d61b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b92ea4e5980848f38b0d219863bf3380",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.FamilyTypes, DSRevitNodesUI",
+      "SelectedIndex": -1,
+      "SelectedString": "",
+      "NodeType": "ExtensionNode",
+      "Id": "b328c3c599414d3ab38031242730c79c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f1657aa102d24bba95629a3e6f6195ab",
+          "Name": "Family Type",
+          "Description": "The selected Family Type",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "All family types available in the document."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "c58dd0890e7644e4a953862d7f3e26fe",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a167ce2733144dda87c160274f8baf86",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\n\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nimport System \r\nimport System.Collections\r\n#Access to Revit Document\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n#To Get Doc, UI and Application Objects\r\nfrom RevitServices.Persistence import DocumentManager\r\n#Needed to make any changes in Revit\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\n\r\nfrom Autodesk.Revit.DB.Structure import *\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\nfrom System.Collections.Generic import List\r\nimport traceback\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n\r\ndef getParameterVal(element, parameterName):\r\n\treturn element.LookupParameter(parameterName).AsValueString()\r\ndef getParameterValAsString(element, parameterName):\r\n\treturn element.LookupParameter(parameterName).AsString()\r\n\t\r\ndef getParameterValDouble(element, parameterName):\r\n\treturn element.LookupParameter(parameterName).AsDouble()\r\n\r\ndef setParamByName(element, parameterName, value):\r\n\telement.LookupParameter(parameterName).Set(value)\r\n\treturn value\r\n\t\r\ndef getBIPParamVal(element, BIParameter):\r\n\treturn element.get_Parameter(BIParameter).AsValueString()\r\n\t\r\ndef getBIPParamValAsString(element, BIParameter):\r\n\treturn element.get_Parameter(BIParameter).AsString()\r\n\r\ndef getBIPParamValDouble(element, BIParameter):\r\n\treturn element.get_Parameter(BIParameter).AsDouble()\r\n\r\ndef setBIPParamVal(element, BIParameter, value):\r\n\telement.get_Parameter(BIParameter).Set(value)\r\n\treturn value\r\n\r\n#Define Lists\r\nelemTypeName = []\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\nfamTypeToChange = IN[0]\r\nfamTypeToChangeTo = IN[1]\r\n\r\n#valOneParam = \"Angle\"\r\n#valTwoParam = \"HEC_Angle\"\r\n#valOne = getParameterValDouble(UnwrapElement(famTypeToChange), valOneParam)\r\n#valTwo = getParameterValDouble(UnwrapElement(famTypeToChangeTo), valTwoParam)\r\n\r\nfamTypeToChangeName = famTypeToChange.Name.ToString()\r\nfamTypeToChangeFamName = UnwrapElement(famTypeToChange).FamilyName.ToString()\r\nfamTypeToChangeToName = famTypeToChangeTo.Name.ToString()\r\nfamTypeToChangeToFamName = UnwrapElement(famTypeToChange).FamilyName.ToString()\r\n\r\n\r\n#No User Changes Needed till Line 207\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n#Get Elements with Family Name Matching info Above\r\nstring = famTypeToChangeFamName\r\ncase = IN[2]\r\nsearch = \"Family\"\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == search:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == search:\r\n\t\t\tbiplist.append(bip)\r\nsharedparamrule = SharedParameterApplicableRule(search)\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == search:\r\n\t\t\tparameter = param\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\nTransactionManager.Instance.TransactionTaskDone()\r\n#Check Family Names of Selected, check to ensure Family Type Matches Also\r\ntry:\r\n\telems = []\r\n\tfor e in elements:\r\n\t\telemTypeName = getBIPParamVal(e, BuiltInParameter.ELEM_FAMILY_AND_TYPE_PARAM)\r\n\t\tif famTypeToChangeName in elemTypeName:\r\n\t\t\telems.append(e)\t\r\nexcept:\r\n\timport traceback\r\n\tmessage = traceback.format_exc()\r\n\tOutput.Add(message)\r\n#Errror List\r\nOutput = []\r\n#Parameter Values to Manipulate\r\nvalOneOldParam = \"WALL_PEN_DEPTH\"\r\nvalOneNewParam = \"WALL_PEN_DEPTH\"\r\nvalTwoOldParam = \"WALL_PEN_LENGTH\"\r\nvalTwoNewParam = \"WALL_PEN_LENGTH\"\r\nvalThreeOldParam = \"WALL_PEN_OPENING\"\r\nvalThreeNewParam = \"WALL_PEN_OPENING\"\r\nvalFourOldParam = \"BOTTOM_OPENING_AFF\"\r\n#valFourNewParam = \"Rod Diameter\"\r\n#valFiveOldParam = \"user filter 9\"\r\n#valFiveNewParam = \"HEC_Length\"\r\ntry:\r\n\ti=0\r\n\tfor sE in elems:\r\n\t\tsEIDList = List[ElementId]()\r\n\t\tsEIDList.Add(sE.Id)\r\n\r\n\t\tParamOneValue = sE.LookupParameter(valOneOldParam).AsDouble()\r\n\t\tParamTwoValue = sE.LookupParameter(valTwoOldParam).AsDouble()\r\n\t\tParamThreeValue = sE.LookupParameter(valThreeOldParam).AsDouble()\r\n\t\tParamFourValue = sE.LookupParameter(valFourOldParam).AsDouble()\r\n\t\t#ParamFiveValue = sE.LookupParameter(valFiveOldParam).AsString()\r\n\r\n\t\tif sE.WorksetId != None:\r\n\t\t\tsEWorksetID = sE.WorksetId.ToString()\r\n\t\t\r\n\t\t\tcopyElem = None\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tcopyElem = ElementTransformUtils.CopyElements(doc, sEIDList, XYZ(0,0,0))\r\n\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\tif copyElem != None:\r\n\t\t\t\tfor cEID in copyElem:\r\n\t\t\t\t\tcE = doc.GetElement(cEID)\t\r\n\t\r\n\t\t\t\toffsetVal = getBIPParamValDouble(cE, BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM)\r\n\t\t\ttry:\t\r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\tcE.ChangeTypeId(ElementId(famTypeToChangeTo.Id))\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\r\n\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\r\n\t\t\t\tsetBIPParamVal(cE, BuiltInParameter.INSTANCE_FREE_HOST_OFFSET_PARAM, 0)\r\n\t\t\t\tif sE.WorksetId != None:\r\n\t\t\t\t\tsetBIPParamVal(cE, BuiltInParameter.ELEM_PARTITION_PARAM, sEWorksetID)\t\r\n\t\t\t\t#cE.LookupParameter(\"user filter 8\").Set(\"Script Copy\")\r\n\t\r\n\t\r\n\t\t\t\tcE.LookupParameter(valOneNewParam).Set(ParamOneValue)\r\n\t\t\t\tcE.LookupParameter(valTwoNewParam).Set(ParamTwoValue)\r\n\t\t\t\tcE.LookupParameter(valThreeNewParam).Set(ParamThreeValue)\r\n\t\t\t\tcE.LookupParameter(valFourOldParam).Set( ParamFourValue)\r\n\t\t\t\t#cE.LookupParameter().Set(ParamFiveValue)\r\n\t\r\n\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\tOutput.Add([cE, \"Successfully Duplicated and Swapped\"])\r\n\t\t\texcept:\r\n\t\t\t\tnext\r\n\r\n\t\t\t\r\nexcept:\r\n\timport traceback\r\n\tmessage = traceback.format_exc()\r\n\tOutput.Add(message)\r\ni += 1\t\r\ntry:\r\n\tOUT = i, Output, famTypeToChangeTo.Id\r\nexcept:\r\n\tOUT = Output\r\n\t\t\t\t\r\n\t\r\n\r\n",
+      "VariableInputPorts": true,
+      "Id": "bab414967d26426eb95c030eff4683ac",
+      "Inputs": [
+        {
+          "Id": "21e5fcedd5c34a65a01bfc65775abe61",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "914e3491551e46168ca3e3bc827b460f",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "dae12f005f8545c1bbe7083284f9cbd2",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "cff2035974b143068a952a3c0d9a70f5",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\n\r\npyPath = r\"C:\\Program Files (x86)\\IronPython 2.7\\Lib\"\r\nsys.path.append(pyPath)\r\n\r\nimport System \r\nimport System.Collections\r\n#Access to Revit Document\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\n#To Get Doc, UI and Application Objects\r\nfrom RevitServices.Persistence import DocumentManager\r\n#Needed to make any changes in Revit\r\nfrom RevitServices.Transactions import TransactionManager\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\n\r\nfrom Autodesk.Revit.DB.Structure import *\r\nclr.AddReference(\"RevitAPIUI\")\r\nfrom Autodesk.Revit.UI import *\r\nfrom System.Collections.Generic import List\r\nimport traceback\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuidoc = DocumentManager.Instance.CurrentUIDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n\r\ndef getParameterVal(element, parameterName):\r\n\treturn element.LookupParameter(parameterName).AsValueString()\r\ndef getParameterValAsString(element, parameterName):\r\n\treturn element.LookupParameter(parameterName).AsString()\r\n\t\r\ndef getParameterValDouble(element, parameterName):\r\n\treturn element.LookupParameter(parameterName).AsDouble()\r\n\r\ndef setParamByName(element, parameterName, value):\r\n\telement.LookupParameter(parameterName).Set(value)\r\n\treturn value\r\n\t\r\ndef getBIPParamVal(element, BIParameter):\r\n\treturn element.get_Parameter(BIParameter).AsValueString()\r\n\t\r\ndef getBIPParamValAsString(element, BIParameter):\r\n\treturn element.get_Parameter(BIParameter).AsString()\r\n\r\ndef getBIPParamValDouble(element, BIParameter):\r\n\treturn element.get_Parameter(BIParameter).AsDouble()\r\n\r\ndef setBIPParamVal(element, BIParameter, value):\r\n\telement.get_Parameter(BIParameter).Set(value)\r\n\treturn value\r\n\r\n#Define Lists\r\nelemTypeName = []\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndataEnteringNode = IN\r\nfamTypeToChange = IN[0]\r\n\r\n\r\n#valOneParam = \"Angle\"\r\n#valTwoParam = \"HEC_Angle\"\r\n#valOne = getParameterValDouble(UnwrapElement(famTypeToChange), valOneParam)\r\n#valTwo = getParameterValDouble(UnwrapElement(famTypeToChangeTo), valTwoParam)\r\n\r\nfamTypeToChangeName = famTypeToChange.Name.ToString()\r\nfamTypeToChangeFamName = UnwrapElement(famTypeToChange).FamilyName.ToString()\r\n\r\n\r\n\r\n#No User Changes Needed till Line 207\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n#Get Elements with Family Name Matching info Above\r\nstring = famTypeToChangeFamName\r\ncase = IN[1]\r\nsearch = \"Family\"\r\nbips = System.Enum.GetValues(BuiltInParameter)\r\nbm = doc.ParameterBindings\r\nbmlist = bm.ForwardIterator()\r\nparamId = None\r\ntestout = []\r\nwhile bmlist.MoveNext():\r\n\tbinddef = bmlist.Key\r\n\ttestout.append(binddef.Name)\r\n\tif binddef.Name == search:\r\n\t\tparamId = binddef.Id\r\n\t\tbreak\r\nparam = None\r\nif paramId == None:\r\n\tbiplist = []\r\n\tfor bip in bips:\r\n\t\ttry:\r\n\t\t\tname = LabelUtils.GetLabelFor(bip)\r\n\t\texcept:\r\n\t\t\tcontinue\r\n\t\tif name == search:\r\n\t\t\tbiplist.append(bip)\r\nsharedparamrule = SharedParameterApplicableRule(search)\r\nevaluator = FilterStringContains()\r\nparameter = None\r\nif paramId == None and len(biplist) == 0:\r\n\tcoll = FilteredElementCollector(doc)\r\n\tsharedparams = coll.OfClass(ParameterElement)\r\n\tfor param in sharedparams:\r\n\t\tname = param.GetDefinition().Name\r\n\t\tif name == search:\r\n\t\t\tparameter = param\r\n\tif parameter != None:\r\n\t\truleslist = List[FilterRule]()\r\n\t\tprovider = ParameterValueProvider(parameter.Id)\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\truleslist.Add(filterrule)\r\n\t\truleslist.Add(sharedparamrule)\r\n\t\tparamFilter = ElementParameterFilter(ruleslist)\r\n\t\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\nelif paramId == None:\r\n\tif len(biplist) == 1:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\telse:\r\n\t\tprovider = ParameterValueProvider(ElementId(biplist[0]))\r\n\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\tcollector2.UnionWith(collector)\r\n\t\tfor i,param in enumerate(biplist):\r\n\t\t\tif i == 0:\r\n\t\t\t\tcontinue\r\n\t\t\tprovider = ParameterValueProvider(ElementId(param))\r\n\t\t\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\t\t\tparamFilter = ElementParameterFilter(filterrule)\r\n\t\t\ttempcollector1 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\t\ttempcollector1.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\t\t\ttempcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\t\t\ttempcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\t\t\ttempcollector2.UnionWith(tempcollector1)\r\n\t\t\tcollector2.UnionWith(tempcollector2)\r\nelse:\r\n\truleslist = List[FilterRule]()\r\n\tprovider = ParameterValueProvider(paramId)\r\n\tfilterrule = FilterStringRule(provider, evaluator, string , case)\r\n\truleslist.Add(filterrule)\r\n\truleslist.Add(sharedparamrule)\r\n\tparamFilter = ElementParameterFilter(ruleslist)\r\n\tcollector = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\tcollector.OfClass(FamilyInstance).WherePasses(paramFilter)\r\n\tcollector2 = FilteredElementCollector(doc, doc.ActiveView.Id)\r\n\tcollector2.OfClass(HostObject).WherePasses(paramFilter)\r\n\tcollector2.UnionWith(collector)\r\nif parameter == None and paramId == None and len(biplist) == 0:\r\n\tOUT = \"Does not work with non-shared family parameters\"\r\nelse:\r\n\telements = collector2.ToElements()\r\nTransactionManager.Instance.TransactionTaskDone()\r\n#Check Family Names of Selected, check to ensure Family Type Matches Also\r\ntry:\r\n\telems = []\r\n\tfor e in elements:\r\n\t\telemTypeName = getBIPParamVal(e, BuiltInParameter.ELEM_FAMILY_AND_TYPE_PARAM)\r\n\t\tif famTypeToChangeName in elemTypeName:\r\n\t\t\telems.append(e)\t\r\nexcept:\r\n\timport traceback\r\n\tmessage = traceback.format_exc()\r\n\tOutput.Add(message)\r\n\r\nfor element in elements:\r\n\theightfromLevel = element.GetTransform().Origin.Z - 0.0694444444444444\r\n\tBOTTOM_OPENING_AFF = element.LookupParameter(\"BOTTOM_OPENING_AFF\").AsDouble()\r\n\tNew_BOTTOM_OPENING_AFF = str(BOTTOM_OPENING_AFF + heightfromLevel)\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\telement.LookupParameter(\"user filter 9\").Set(New_BOTTOM_OPENING_AFF)\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\r\n\t#DoubleP = float(element.LookupParameter(\"user filter 9\").AsString())\r\n\t#TransactionManager.Instance.EnsureInTransaction(doc)\r\n\t#element.LookupParameter(\"BOTTOM_OPENING_AFF\").Set(DoubleP)\r\n\t#TransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\r\n\t\r\nOUT = BOTTOM_OPENING_AFF\r\n",
+      "VariableInputPorts": true,
+      "Id": "3805f72ac5f64062b11a7a659113c892",
+      "Inputs": [
+        {
+          "Id": "6e69d329e45c4bf4ba6cc938337e5078",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "05ff83454f2c4b7b99c9fab34b9278f7",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1ba41a0d58ed44b2bfd3422757a62225",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "b92ea4e5980848f38b0d219863bf3380",
+      "End": "914e3491551e46168ca3e3bc827b460f",
+      "Id": "5bfe03da21db4bd3a89c06ae83f919f6"
+    },
+    {
+      "Start": "f1657aa102d24bba95629a3e6f6195ab",
+      "End": "21e5fcedd5c34a65a01bfc65775abe61",
+      "Id": "1b389b61cb8f42ec936a62617da70318"
+    },
+    {
+      "Start": "f1657aa102d24bba95629a3e6f6195ab",
+      "End": "6e69d329e45c4bf4ba6cc938337e5078",
+      "Id": "3612e08f6fdd4f13a8abe567bca07890"
+    },
+    {
+      "Start": "a167ce2733144dda87c160274f8baf86",
+      "End": "05ff83454f2c4b7b99c9fab34b9278f7",
+      "Id": "efa2005ec4444779ad3830b3e0d819fe"
+    },
+    {
+      "Start": "a167ce2733144dda87c160274f8baf86",
+      "End": "dae12f005f8545c1bbe7083284f9cbd2",
+      "Id": "e80aa8a7f69d44b0ace2b0bd9b62756d"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.2.15705",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -22.335239130720336,
+      "EyeY": 41.972295959531714,
+      "EyeZ": 91.9151448344386,
+      "LookX": 20.905328640000008,
+      "LookY": -22.647439360000014,
+      "LookZ": -101.04242176000002,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "a01f271d97164481891a2cacf966d61b",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Family Types To Change To ",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": -3738.9915526869654,
+        "Y": -1121.9180217088349
+      },
+      {
+        "Id": "b328c3c599414d3ab38031242730c79c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Family Types To Change",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": -3730.1229431647639,
+        "Y": -1201.3560004309718
+      },
+      {
+        "Id": "c58dd0890e7644e4a953862d7f3e26fe",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "IgnoreCase?",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": -3445.1148788985479,
+        "Y": -1013.9814552015317
+      },
+      {
+        "Id": "bab414967d26426eb95c030eff4683ac",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Python",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": -2955.8711692251541,
+        "Y": -1138.341858916983
+      },
+      {
+        "Id": "3805f72ac5f64062b11a7a659113c892",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Get Elevation",
+        "ShowGeometry": true,
+        "Excluded": true,
+        "X": -3166.4867335355093,
+        "Y": -779.320109863495
+      }
+    ],
+    "Annotations": [],
+    "X": 4605.3368460196834,
+    "Y": 1594.9181621530906,
+    "Zoom": 1.1412942909840667
+  }
+}

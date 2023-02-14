@@ -1,0 +1,376 @@
+{
+  "Uuid": "5d596541-2b59-4718-9348-2080655f0ff0",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Family - APL - Add Shared Parameters",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "ca553a02c3de48faa90fb60d1f271a23",
+      "Name": "Instance Parameter Name/s",
+      "Type": "string",
+      "Value": "HEC_RTS_Visibile, ",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    },
+    {
+      "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+      "Name": "Type Parameter Name/s",
+      "Type": "string",
+      "Value": "APL_PointPrefix, ",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    },
+    {
+      "Id": "aaf30af1da374d91926cf0f5ec2e4669",
+      "Name": "RTS Description for Formula Field. for non Parameter Names add \\\" before and after ex. \\\" Description Desired \"\\ Parameter Name ex. HEC_Description",
+      "Type": "string",
+      "Value": "Description",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    },
+    {
+      "Id": "e2a958cb6b634156b03a02a83a023e14",
+      "Name": "RTS Prefix To Formula ",
+      "Type": "string",
+      "Value": "LF",
+      "Description": "Creates a string.",
+      "SelectedIndex": 0
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import*\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n#Inputs\r\nTypeParameterNames = IN[0] \r\nInstanceParameterNames = IN[1]\r\ndelim = IN[2]\r\nDescription = IN[3]\r\nPrefix = IN[4]\r\n\r\n#Lists\r\nresult = []\r\n\t\r\ndef DefinitionFileByParameterName(ParameterName):\r\n\tSharedParameterFile = app.OpenSharedParameterFile()\r\n\tGroups = SharedParameterFile.Groups\r\n\tfor Group in Groups:\r\n\t\tGroupDefinition = Group.Definitions\r\n\t\tfor GroupDef in GroupDefinition:\r\n\t\t\tif GroupDef.Name == ParameterName:\r\n\t\t\t\treturn GroupDef\r\n\t\r\n\t\r\ndef GetBuiltInParameterGroup(ParameterName):\r\n\tSharedParameterFile = app.OpenSharedParameterFile()\r\n\tGroups = SharedParameterFile.Groups\r\n\tfor Group in Groups:\r\n\t\tGroupDefinition = Group.Definitions\r\n\t\tfor GroupDef in GroupDefinition:\r\n\t\t\tif GroupDef.Name == ParameterName:\r\n\t\t\t\tif GroupDef.Name == \"HEC_Host Element\" or GroupDef.Name == \"HEC_Nested Element\" or GroupDef.Name == \"HEC_Remarcable ID\" or GroupDef.Name == \"HEC_Description\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_IDENTITY_DATA\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Length\" or GroupDef.ParameterType.ToString() == \"Angle\" or GroupDef.ParameterType.ToString() == \"ElectricalConduitSize\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_GEOMETRY\r\n\t\t\t\telif GroupDef.OwnerGroup.Name == \"RTS\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_DATA\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Text\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_TEXT\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"YesNo\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_VISIBILITY\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Integer\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_CONSTRUCTION\r\n\t\t\t\telse:\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_GENERAL\r\n\t\t\t\r\n\t\t\t\treturn BIPGroup\r\n\t\r\n#Type Parameters\r\nif TypeParameterNames != \"\" or TypeParameterNames != none:\r\n\tTypeParameterName = TypeParameterNames.split(delim)\r\n\tfor TypeParamName in TypeParameterName:\r\n\t\ttry:\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tTypeDefinitionFileParameter = DefinitionFileByParameterName(TypeParamName)\r\n\t\t\tTypeDefinitionFileGroup = GetBuiltInParameterGroup(TypeParamName)\r\n\t\t\tdoc.FamilyManager.AddParameter(TypeDefinitionFileParameter, TypeDefinitionFileGroup, False)\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\texcept Exception as e:\r\n\t\t\tresult.append([e,\"Type Parameter Failed\"])\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\t\r\nif InstanceParameterNames != \"\" or InstanceParameterNames != none:\r\n\tInstanceParameterName = InstanceParameterNames.split(delim)\t\r\n\tfor InstanceParamName in InstanceParameterName:\r\n\t\ttry :\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tInstanceDefinitionFileParameter = DefinitionFileByParameterName(InstanceParamName)\r\n\t\t\tInstanceDefinitionFileGroup = GetBuiltInParameterGroup(InstanceParamName)\r\n\t\t\tdoc.FamilyManager.AddParameter(InstanceDefinitionFileParameter, InstanceDefinitionFileGroup, True)\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\texcept Exception as e:\r\n\t\t\tresult.append([ e, \"Instance Parameter Failed\"])\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\r\n\t\t\t\r\nfamParamList = doc.FamilyManager.GetParameters()\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ntry:\r\n\tfor FamilyParameter in famParamList:\r\n\t\tif \"PointRole\" in FamilyParameter.Definition.Name:\r\n\t\t\tdoc.FamilyManager.SetFormula(FamilyParameter, \"\\\"Stake Out\\\"\")\r\n\t\tif \"PointDescription\" in FamilyParameter.Definition.Name or \"HEC_Description\" in FamilyParameter.Definition.Name:\r\n\t\t\tdoc.FamilyManager.SetFormula(FamilyParameter, Description)\r\n\t\tif \"PointPrefix\" in FamilyParameter.Definition.Name:\r\n\t\t\tdoc.FamilyManager.SetFormula(FamilyParameter, \"\\\"\" + Prefix + \"\\\"\")\r\n\t\tif \"PointElement\" in FamilyParameter.Definition.Name:\r\n\t\t\tdoc.FamilyManager.SetFormula(FamilyParameter, \"\\\"\" + doc.Title.ToString() + \"\\\"\")\r\n\r\nexcept Exception as e:\r\n\t\tresult.append([e, \"Add Point Formulas Failed\"])\r\n\t\t\r\nTransactionManager.Instance.ForceCloseTransaction()\r\n\t\t\r\n#FilteredElementCollectorGeneric = FilteredElementCollector(doc, doc.ActiveView.Id).OfCategory(BuiltInCategory.OST_GenericModel).WhereElementIsNotElementType().ToElements()\r\n#for FECElement in FilteredElementCollectorGeneric:\r\n#\tFECElementName = FECElement.Symbol.FamilyName.ToString()\r\n#\tif FECElementName.__contains__(\"GTP\"):\r\n#\t\tElementParamList = FECElement.GetParameters()\r\n#\t\tfor ElementParam in ElementParameList:\r\n#\t\t\tElementParamName = Element.Name\r\n#\t\t\tif ElementParamName.__contains__(\"PointDescription\"):\t\t\t\r\n#\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n#\t\t\t\tFECElement.LookupParameter(ElementParamName).Set(FECElementName)\r\n#\t\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\r\n\t\t\r\nOUT =  result",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "567e315bfee545e1ae4d31563484edf8",
+      "Inputs": [
+        {
+          "Id": "98b1f52bb5374b2fb05e732d2c282bbf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5865c8434c904e3a960a2444e5262dd4",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "879bdf5a2cfb40218a59bc6f506cc129",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a2cc51e282d04cd9a1b95ce8875e71b7",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "90ffb31067f1439b96cbb9bb8a55a0fc",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b047d63c28cf4c5cbee5ca971ae3c74a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "HEC_RTS_Visibile, ",
+      "Id": "ca553a02c3de48faa90fb60d1f271a23",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "73576bd210504613a977ec177d956733",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": ", ",
+      "Id": "07c1365319de4bb8af667e8159ae2e7c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "82f0135f2a2a4b35ad7b7a5e378628ac",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "APL_PointPrefix, ",
+      "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e6456fb77d9d4559a3d86538184393d4",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Description",
+      "Id": "aaf30af1da374d91926cf0f5ec2e4669",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a47c03ae74784af9bf87d31b8a162959",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "LF",
+      "Id": "e2a958cb6b634156b03a02a83a023e14",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "747f5d33f99646ddb210ba39d9fdb94c",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "73576bd210504613a977ec177d956733",
+      "End": "5865c8434c904e3a960a2444e5262dd4",
+      "Id": "6900a6e9b3c54f698a4c1032cedb0e41"
+    },
+    {
+      "Start": "82f0135f2a2a4b35ad7b7a5e378628ac",
+      "End": "879bdf5a2cfb40218a59bc6f506cc129",
+      "Id": "149944ac504d4b1a8e0190bbf94b5d50"
+    },
+    {
+      "Start": "e6456fb77d9d4559a3d86538184393d4",
+      "End": "98b1f52bb5374b2fb05e732d2c282bbf",
+      "Id": "70759c78fc4c4eddab6771dbef36ddba"
+    },
+    {
+      "Start": "a47c03ae74784af9bf87d31b8a162959",
+      "End": "a2cc51e282d04cd9a1b95ce8875e71b7",
+      "Id": "082e37ebf25f4fa98e382e87ed6f5073"
+    },
+    {
+      "Start": "747f5d33f99646ddb210ba39d9fdb94c",
+      "End": "90ffb31067f1439b96cbb9bb8a55a0fc",
+      "Id": "3752485cc2734aa8ab99c8b6f6936f6f"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.12",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "1.10",
+      "Data": {}
+    }
+  ],
+  "Author": "None provided",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.12.1.8246",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Add Shared Parameter to Family",
+        "Id": "567e315bfee545e1ae4d31563484edf8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 194.77151677880914,
+        "Y": 159.15685807092484
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Instance Parameter Name/s",
+        "Id": "ca553a02c3de48faa90fb60d1f271a23",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -95.878790764566133,
+        "Y": 194.25437599992705
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Delimeter(include space if exists)",
+        "Id": "07c1365319de4bb8af667e8159ae2e7c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -127.12630982733049,
+        "Y": 267.54447845525397
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Type Parameter Name/s",
+        "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -73.250864944739988,
+        "Y": 134.93935123053029
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "RTS Description for Formula Field. for non Parameter Names add \\\" before and after ex. \\\" Description Desired \"\\ Parameter Name ex. HEC_Description",
+        "Id": "aaf30af1da374d91926cf0f5ec2e4669",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -851.54354430330318,
+        "Y": 331.87369711484075
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "RTS Prefix To Formula ",
+        "Id": "e2a958cb6b634156b03a02a83a023e14",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -65.0924477095904,
+        "Y": 390.42625819428542
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "29f0d66c53034bcfbb3337d939e1ee77",
+        "Title": "Type Parameters and User Inputs",
+        "Nodes": [
+          "832ab5b2116f4c65a2f4bac0836baf62",
+          "07c1365319de4bb8af667e8159ae2e7c",
+          "ca553a02c3de48faa90fb60d1f271a23",
+          "aaf30af1da374d91926cf0f5ec2e4669",
+          "e2a958cb6b634156b03a02a83a023e14"
+        ],
+        "Left": -861.54354430330318,
+        "Top": 81.939351230530292,
+        "Width": 1019.0,
+        "Height": 376.48690696375513,
+        "FontSize": 36.0,
+        "InitialTop": 134.93935123053029,
+        "InitialHeight": 400.48690696375513,
+        "TextblockHeight": 43.0,
+        "Background": "#FF48B9FF"
+      }
+    ],
+    "X": 713.93484332068465,
+    "Y": 144.29399694884825,
+    "Zoom": 0.84073543619491653
+  }
+}

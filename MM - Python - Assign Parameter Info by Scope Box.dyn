@@ -1,0 +1,225 @@
+{
+  "Uuid": "253b5bac-a45a-42b9-92a8-9575da2f8aaa",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MPM - Python - Assign Parameter Info by Scope Box",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "49ff22c4071f4e8c9b9a41fdc9245097",
+      "Name": "Parameter to Name",
+      "Type": "string",
+      "Value": "HEC_Area",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "3ceab30bacf34390a4d927df07ae24e4",
+      "Name": "Scope Box Name Contains",
+      "Type": "string",
+      "Value": "AREA",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "27c3ae1eae40470eaa966b3427dd4f99",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bf8f51478f7546ed9d71b07cde9c870f",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference('RevitAPIUI')\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nfrom Revit.Elements import *\r\nclr.AddReference(\"RevitServices\")\r\nfrom Autodesk.Revit.UI import TaskDialog\r\nimport RevitServices\r\nimport Autodesk.Revit.DB.Element\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\nfrom System import Enum\r\nfrom Autodesk.Revit.Exceptions import *\r\nimport traceback\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nscope_box = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_VolumeOfInterest).ToElements()\r\nscope_box_names = []\r\nscope_boxes = []\r\ndesired_scope_box_name = IN[2]\r\np_name = IN[1]\r\nresult = []\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\ntry:\r\n    for scope in scope_box:\r\n        try:\r\n            scope_box_names.append(scope.Name)\r\n            scope_boxes.append(scope)\r\n        except Exception as e:\r\n            pass\r\n    desired_name = None\r\n    for box in scope_boxes:\r\n    \tdesired_name = box.Name\r\n        if desired_scope_box_name in desired_name :\r\n            bounding_box = box.get_BoundingBox(None)\r\n            bbox_min = bounding_box.Min\r\n            bbox_max = bounding_box.Max\r\n            outline = Outline(bbox_min, bbox_max)\r\n            filter = BoundingBoxIntersectsFilter(outline)\r\n            elements_within_scope_box = FilteredElementCollector(doc).WherePasses(filter).WhereElementIsNotElementType().ToElements()\r\n            #element_ids = [element.Id for element in elements_within_scope_box]\r\n            for element in elements_within_scope_box:\r\n                #elements = doc.GetElement(e)\r\n                if isinstance(element, View):\r\n                    continue\r\n                change = element.LookupParameter(p_name)\r\n                if change != None and not change.IsReadOnly():\r\n                    try:\r\n                        change.Set(desired_name)\r\n                        result.append(\"Success Adding Parameter Value: \" + str(element.Id))\r\n                    except:\r\n                        result.append(\"Failed to set parameter for element with id: \" + str(element.Id))\r\n        else:\r\n            continue\r\nexcept:\r\n    result.append(traceback.format_exc())\r\n    for r in result:\r\n        TaskDialog.Show(\"Error\", r)\r\nTransactionManager.Instance.TransactionTaskDone()\r\nOUT = result\r\n",
+      "VariableInputPorts": true,
+      "Id": "30dec6692b8f4f8b9ef96a763f330694",
+      "Inputs": [
+        {
+          "Id": "ec762fed976041f9990ec9356be0c163",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5f6fe8466d3b464d8fa3aad37db185f9",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "65e9ee8f89f941709928241d3e512aad",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "015e5332c5f84c2386e81c11be8455c3",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "HEC_Area",
+      "Id": "49ff22c4071f4e8c9b9a41fdc9245097",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "686e2999e2684c73bb4aab2cc6ef7200",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "AREA",
+      "Id": "3ceab30bacf34390a4d927df07ae24e4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6d387ca90b50411887e7ab88b2e228cc",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "bf8f51478f7546ed9d71b07cde9c870f",
+      "End": "ec762fed976041f9990ec9356be0c163",
+      "Id": "6597ace8cd6a420db3b999e4ae7c24fe"
+    },
+    {
+      "Start": "686e2999e2684c73bb4aab2cc6ef7200",
+      "End": "5f6fe8466d3b464d8fa3aad37db185f9",
+      "Id": "d1dd3c30a9584126b282ac4ed0d6b69f"
+    },
+    {
+      "Start": "6d387ca90b50411887e7ab88b2e228cc",
+      "End": "65e9ee8f89f941709928241d3e512aad",
+      "Id": "bc51edf8bd6e4c6e8b306faaea51e64d"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.2.15696",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Manual Refresh",
+        "Id": "27c3ae1eae40470eaa966b3427dd4f99",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -23.692365893104551,
+        "Y": 174.64872809672087
+      },
+      {
+        "ShowGeometry": false,
+        "Name": "Scope Box Assign Parameter",
+        "Id": "30dec6692b8f4f8b9ef96a763f330694",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 210.37118247242654,
+        "Y": 173.32788346058905
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter to Name",
+        "Id": "49ff22c4071f4e8c9b9a41fdc9245097",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -48.553410107568254,
+        "Y": 233.7472519600708
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Scope Box Name Contains",
+        "Id": "3ceab30bacf34390a4d927df07ae24e4",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -48.895553060786767,
+        "Y": 293.28018413809997
+      }
+    ],
+    "Annotations": [],
+    "X": -76.894066176591579,
+    "Y": 40.87670361630785,
+    "Zoom": 0.59149209230600786
+  }
+}

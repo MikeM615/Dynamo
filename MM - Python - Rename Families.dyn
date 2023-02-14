@@ -1,0 +1,107 @@
+{
+  "Uuid": "80fad942-70e2-41f7-b27b-99d98e8ddcba",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Rename Families",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport System\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager \r\nfrom RevitServices.Transactions import TransactionManager \r\nclr.AddReference(\"RevitAPI\")\r\n\r\nimport Autodesk \r\nfrom Autodesk.Revit.DB import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n\r\nactiveView = doc.ActiveView\r\nelementFilteredELementCollector = FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements()\r\ntry:\t\r\n\tfor element in elementFilteredELementCollector:\r\n\t\tFamilyName = element.Family.Name\r\n\r\n\t\tTypeName = Element.Name.GetValue(element)\r\n\t\ttry:\r\n\r\n\t\t\tHyphenSpaceFamilyName = FamilyName.replace(\" - \", \"-\")\r\n\t\t\tHyphenSpaceTypeName = TypeName.replace(\" - \", \"-\")\r\n\t\t\tNormalizeFamilyName = HyphenSpaceFamilyName.replace(\" \", \"_\").ToUpper()\r\n\t\t\tNormalizeTypeName = HyphenSpaceTypeName.replace(\" \", \"_\").ToUpper()\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tt1 = element.Family.Name = NormalizeFamilyName\r\n\t\t\tt2 = element.Name = NormalizeTypeName\r\n\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\texcept:\r\n\t\t\tnext\r\n\t\t\r\n\t\t\t\r\nexcept:\r\n\tnext\r\n\r\n\r\n# Assign your output to the OUT variable.\r\nOUT = FamilyName, TypeName, NormalizeFamilyName, NormalizeTypeName, t1, t2",
+      "VariableInputPorts": true,
+      "Id": "75f0866cbcc544738b4d7d15ce57a94e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a41e3c0260e04e89ae32b188bf9f9dbc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nimport sys\r\nsys.path.append('C:\\Program Files (x86)\\IronPython 2.7\\Lib')\r\nimport System\r\n\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager \r\nfrom RevitServices.Transactions import TransactionManager \r\nclr.AddReference(\"RevitAPI\")\r\n\r\nimport Autodesk \r\nfrom Autodesk.Revit.DB import *\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n\r\nactiveView = doc.ActiveView\r\nelementFilteredELementCollector = FilteredElementCollector(doc).OfClass(FamilySymbol).WhereElementIsElementType().ToElements()\r\ntry:\t\r\n\tfor element in elementFilteredELementCollector:\r\n\t\ttry:\r\n\t\t\tFamilyName = element.Family.Name\r\n\t\r\n\t\t\tTypeName = Element.Name.GetValue(element)\r\n\t\texcept:\r\n\t\t\tnext\r\n\t\ttry:\r\n\t\t\tif FamilyName.__contains__(\"_(PRECAST)\"):\r\n\t\t\t\tNameCorrectFamilyName = FamilyName.replace(\"_(PRECAST)\",\"_PRECAST\")\r\n\t\t\t\tHyphenSpaceFamilyName = NameCorrectFamilyName.replace(\" - \", \"-\")\r\n\t\t\telse:\r\n\t\t\t\tHyphenSpaceFamilyName = FamilyName.replace(\" - \", \"-\")\r\n\t\t\tHyphenSpaceTypeName = TypeName.replace(\"_(PRECAST)\", \"_PRECAST\")\r\n\t\t\tNormalizeFamilyName = HyphenSpaceFamilyName.replace(\" \", \"_\").ToUpper()\r\n\t\t\tNormalizeTypeName = HyphenSpaceTypeName.replace(\" \", \"_\").ToUpper()\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tt1 = element.Family.Name = NormalizeFamilyName\r\n\t\t\tt2 = element.Name = NormalizeTypeName\r\n\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\texcept:\r\n\t\t\tnext\r\n\t\t\r\n\t\t\t\r\nexcept:\r\n\tnext\r\n\r\n\r\n# Assign your output to the OUT variable.\r\nOUT = FamilyName, TypeName, NormalizeFamilyName, NormalizeTypeName, t1, t2",
+      "VariableInputPorts": true,
+      "Id": "60ca34f746c84817b1bb83cd34a02fc2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e682f603cd904628aef51e0a8c63e072",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.2.15696",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Rename Families in active project or family",
+        "Id": "75f0866cbcc544738b4d7d15ce57a94e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": true,
+        "X": 656.66666666666663,
+        "Y": 494.33333333333331
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Rename Families in active project or family",
+        "Id": "60ca34f746c84817b1bb83cd34a02fc2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 656.66666666666663,
+        "Y": 592.55982095542254
+      }
+    ],
+    "Annotations": [],
+    "X": -1028.8399893826345,
+    "Y": -885.7213485602706,
+    "Zoom": 1.7940097093805587
+  }
+}

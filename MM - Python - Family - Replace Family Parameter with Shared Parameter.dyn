@@ -1,0 +1,250 @@
+{
+  "Uuid": "5d596541-2b59-4718-9348-2080655f0ff0",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "MM - Python - Family - Replace Family Parameter with Shared Parameter",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "07c1365319de4bb8af667e8159ae2e7c",
+      "Name": "Delimeter(include space if exists)",
+      "Type": "string",
+      "Value": ", ",
+      "Description": "Creates a string."
+    },
+    {
+      "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+      "Name": "Parameter Name/s Contains",
+      "Type": "string",
+      "Value": "height, length, width, depth",
+      "Description": "Creates a string."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import*\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import FamilyManager, BuiltInParameterGroup\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n#Inputs\r\n\r\nTypeParameterNames = IN[0] \r\nInstanceParameterNames = IN[1]\r\ndelim = IN[2]\r\n\r\n#Lists\r\nresult = []\r\n\r\n#ExternalDefinition\r\n\r\n\t\r\ndef DefinitionFileByParameterName(ParameterName):\r\n\tSharedParameterFile = app.OpenSharedParameterFile()\r\n\tGroups = SharedParameterFile.Groups\r\n\tfor Group in Groups:\r\n\t\tGroupDefinition = Group.Definitions\r\n\t\tfor GroupDef in GroupDefinition:\r\n\t\t\tif GroupDef.Name == ParameterName:\r\n\t\t\t\treturn GroupDef\r\n\t\r\n\t\r\ndef GetBuiltInParameterGroup(ParameterName):\r\n\tSharedParameterFile = app.OpenSharedParameterFile()\r\n\tGroups = SharedParameterFile.Groups\r\n\tfor Group in Groups:\r\n\t\tGroupDefinition = Group.Definitions\r\n\t\tfor GroupDef in GroupDefinition:\r\n\t\t\tif GroupDef.Name == ParameterName:\r\n\t\t\t\tif GroupDef.Name == \"HEC_Host Element\" or GroupDef.Name == \"HEC_Nested Element\" or GroupDef.Name == \"HEC_Remarcable ID\" or GroupDef.Name == \"HEC_Description\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_IDENTITY_DATA\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Length\" or GroupDef.ParameterType.ToString() == \"Angle\" or GroupDef.ParameterType.ToString() == \"ElectricalConduitSize\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_GEOMETRY\r\n\t\t\t\telif GroupDef.OwnerGroup.Name == \"RTS\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_DATA\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Text\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_TEXT\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"YesNo\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_VISIBILITY\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Integer\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_CONSTRUCTION\r\n\t\t\t\telse:\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_GENERAL\r\n\t\t\t\r\n\t\t\t\treturn BIPGroup\r\n\r\n\t\t\r\n\t\t\r\n\t\t\r\nOUT = result",
+      "VariableInputPorts": true,
+      "Id": "567e315bfee545e1ae4d31563484edf8",
+      "Inputs": [
+        {
+          "Id": "98b1f52bb5374b2fb05e732d2c282bbf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5865c8434c904e3a960a2444e5262dd4",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b047d63c28cf4c5cbee5ca971ae3c74a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": ", ",
+      "Id": "07c1365319de4bb8af667e8159ae2e7c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "82a1c805f8454c52b3a115f4cdb431f9",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "height, length, width, depth",
+      "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "d326db55f2e748fbb6cb831bed7a191f",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import FamilyManager, BuiltInParameterGroup\r\n\r\nclr.AddReference('RevitServices')\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n#Inputs\r\n\r\nTypeParameterNames = IN[0] \r\nInstanceParameterNames = IN[1]\r\ndelim = IN[2]\r\n\r\n#Lists\r\nresult = []\r\n\r\n#ExternalDefinition\r\n\r\n\t\r\ndef DefinitionFileByParameterName(ParameterName):\r\n\tSharedParameterFile = app.OpenSharedParameterFile()\r\n\tGroups = SharedParameterFile.Groups\r\n\tfor Group in Groups:\r\n\t\tGroupDefinition = Group.Definitions\r\n\t\tfor GroupDef in GroupDefinition:\r\n\t\t\tif GroupDef.Name == ParameterName:\r\n\t\t\t\treturn GroupDef\r\n\t\r\n\t\r\ndef GetBuiltInParameterGroup(ParameterName):\r\n\tSharedParameterFile = app.OpenSharedParameterFile()\r\n\tGroups = SharedParameterFile.Groups\r\n\tfor Group in Groups:\r\n\t\tGroupDefinition = Group.Definitions\r\n\t\tfor GroupDef in GroupDefinition:\r\n\t\t\tif GroupDef.Name == ParameterName:\r\n\t\t\t\tif GroupDef.Name == \"HEC_Host Element\" or GroupDef.Name == \"HEC_Nested Element\" or GroupDef.Name == \"HEC_Remarcable ID\" or GroupDef.Name == \"HEC_Description\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_IDENTITY_DATA\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Length\" or GroupDef.ParameterType.ToString() == \"Angle\" or GroupDef.ParameterType.ToString() == \"ElectricalConduitSize\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_GEOMETRY\r\n\t\t\t\telif GroupDef.OwnerGroup.Name == \"RTS\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_DATA\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Text\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_TEXT\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"YesNo\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_VISIBILITY\r\n\t\t\t\telif GroupDef.ParameterType.ToString() == \"Integer\":\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_CONSTRUCTION\r\n\t\t\t\telse:\r\n\t\t\t\t\tBIPGroup = BuiltInParameterGroup.PG_GENERAL\r\n\t\t\t\r\n\t\t\t\treturn BIPGroup\r\n\t\r\n#Type Parameters\r\nif TypeParameterNames != \"\":\r\n\tTypeParameterName = TypeParameterNames.split(delim)\r\n\tfor TypeParamName in TypeParameterName:\r\n\r\n\t\ttry:\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tTypeDefinitionFileParameter = DefinitionFileByParameterName(TypeParamName)\r\n\t\t\tTypeDefinitionFileGroup = GetBuiltInParameterGroup(TypeParamName)\r\n\t\t\tTypeParamName = doc.FamilyManager.AddParameter(TypeDefinitionFileParameter, TypeDefinitionFileGroup, False)\r\n\t\t\tresult.append('Added Type Parameter Successfully')\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\t\t#Set Formula for Host/Nested\r\n\t\t\tif doc.Title.ToString().lower().__contains__(\"nested\"):\r\n\t\t\t\tif TypeParamName.Definition.Name == \"HEC_Host Element\":\r\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\tdoc.FamilyManager.SetFormula(TypeParamName, str(\"1=0\"))\r\n\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\tresult.append(\"Host formula equals False\")\r\n\t\t\t\telif TypeParamName.Definition.Name == \"HEC_Nested Element\":\r\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\tdoc.FamilyManager.SetFormula(TypeParamName, str(\"1=1\"))\r\n\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\tresult.append(\"Nested formula equals True\")\r\n\t\t\telse:\r\n\t\t\t\tif TypeParamName.Definition.Name == \"HEC_Host Element\":\r\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\tdoc.FamilyManager.SetFormula(TypeParamName, str(\"1=1\"))\r\n\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\tresult.append(\"Host formula equals True\")\r\n\t\r\n\t\t\t\telif TypeParamName.Definition.Name == \"HEC_Nested Element\":\r\n\t\t\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\t\t\tdoc.FamilyManager.SetFormula(TypeParamName, str(\"1=0\"))\r\n\t\t\t\t\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\t\t\t\tresult.append(\"Nested formula equals False\")\r\n\t\t\t\r\n\t\texcept Exception as e:\r\n\t\t\tresult.append(e)\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n#Instance Parameters\r\nif InstanceParameterNames != \"\":\r\n\tInstanceParameterName = InstanceParameterNames.split(delim)\t\r\n\tfor InstanceParamName in InstanceParameterName:\r\n\r\n\t\ttry :\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tInstanceDefinitionFileParameter = DefinitionFileByParameterName(InstanceParamName)\r\n\t\t\tInstanceDefinitionFileGroup = GetBuiltInParameterGroup(InstanceParamName)\r\n\t\t\tdoc.FamilyManager.AddParameter(InstanceDefinitionFileParameter, InstanceDefinitionFileGroup, True)\r\n\t\t\tresult.append('Added Instance Parameter Successfully')\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\texcept Exception as e:\r\n\t\t\tresult.append(e)\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\r\nOUT = result",
+      "VariableInputPorts": true,
+      "Id": "c49ffec1a0c54e689eaff4b5566aa4cc",
+      "Inputs": [
+        {
+          "Id": "fa7b14928188486896d1a41deb4df06f",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "49e1c11e1dc84016a0015cd49a345750",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5618aeb47ae04f47a57ff8c6616c3924",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f03addf73aa9404f9bd42d1a3f136624",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "82a1c805f8454c52b3a115f4cdb431f9",
+      "End": "5865c8434c904e3a960a2444e5262dd4",
+      "Id": "c7bc13144bf64eedba92a94c02b307c2"
+    },
+    {
+      "Start": "82a1c805f8454c52b3a115f4cdb431f9",
+      "End": "5618aeb47ae04f47a57ff8c6616c3924",
+      "Id": "0c7340c80f354d8699d77b887db29989"
+    },
+    {
+      "Start": "d326db55f2e748fbb6cb831bed7a191f",
+      "End": "98b1f52bb5374b2fb05e732d2c282bbf",
+      "Id": "283235bbdcdf41d4a5d2910f64b68d2a"
+    },
+    {
+      "Start": "d326db55f2e748fbb6cb831bed7a191f",
+      "End": "fa7b14928188486896d1a41deb4df06f",
+      "Id": "1ae87c70af6f43908aa54ada10b74d8d"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.3.2.15696",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Add Shared Parameter to Family",
+        "Id": "567e315bfee545e1ae4d31563484edf8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 203.21566927115015,
+        "Y": 28.140658463551716
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Delimeter(include space if exists)",
+        "Id": "07c1365319de4bb8af667e8159ae2e7c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -112.52033718840684,
+        "Y": 70.87570978284586
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Parameter Name/s Contains",
+        "Id": "832ab5b2116f4c65a2f4bac0836baf62",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -82.416717158469851,
+        "Y": 12.594074897977876
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Add Shared Parameter to Family",
+        "Id": "c49ffec1a0c54e689eaff4b5566aa4cc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 209.71142784122168,
+        "Y": 175.21184050202089
+      }
+    ],
+    "Annotations": [],
+    "X": 535.22707725677583,
+    "Y": 171.52207592155281,
+    "Zoom": 0.84465946073754139
+  }
+}
